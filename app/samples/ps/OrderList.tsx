@@ -102,7 +102,16 @@ export default function OrderList(props: { tag: string, printers: any[], setting
 
 
   const actionFn = (action: any, item: any) => {
+    if (!orders || !Array.isArray(orders)) {
+      console.warn("Order list is not populated yet.");
+      return;
+    }
+
     const order = orders.find((o:any) => o.name == item.name)
+    if(!order){
+      console.warn("Order not found.");
+      return;
+    }
     if(action.name == 'Ship'){
       setShowShippingModal(true)
       setActiveOrders([order])
