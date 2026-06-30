@@ -2,7 +2,7 @@ import Card from "@/lib/ui/Card";
 import ProductItem from "./ProductItem";
 
 export default function PrintDisplay(props: {order: any}) {
-
+ 
     return (
       <div>
           <Card name={props.order.customer} subText={props.order?.name}>
