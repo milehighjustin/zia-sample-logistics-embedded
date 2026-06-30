@@ -136,12 +136,20 @@ export default function OrderList(props: { tag: string, printers: any[], setting
   }
 
   const printLabels = () => {
+    if (!labelPrinterRef.current) {
+      console.warn("Label printer selection element is not mounted yet.");
+      return;
+    }
     const orderLabels = activeOrders.map((order) => order.labels)
     shopify.toast.show("Label printing triggered for selected orders", { duration: 3000 });
     ziaBackendCall('sampleOps/printLabels?printerId='+labelPrinterRef.current?.value, 'POST', orderLabels)
   }
 
   const printPackingSlips = () => {
+    if (!letterPrinterRef.current) {
+      console.warn("Letter printer selection element is not mounted yet.");
+      return;
+    }
     shopify.toast.show("Packing slip printing triggered for selected orders", { duration: 3000 });
     ziaBackendCall('sampleOps/printPacking?printerId='+letterPrinterRef.current?.value, 'POST', activeOrders)
   }
