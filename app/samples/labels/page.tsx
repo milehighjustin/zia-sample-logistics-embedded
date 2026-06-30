@@ -3,6 +3,9 @@ import ManualLabelsContent from "./ManualLabelsContent"
 import { headers } from "next/headers";
 import ziaBackendCall from "@/lib/ziaBackendCall";
 
+export const dynamic = 'force-dynamic';
+
+
 export default async function ManualLabels(props: any) {
   const params = await props.params
   const searchParams = await props.searchParams
