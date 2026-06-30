@@ -10,7 +10,6 @@ import PageStandardList from "@/lib/ui/PageStandardList"
 
 
 export default function Products(props: any){
-  console.log(props, 'products props')
     const [loading, setLoading] = useState<boolean>(false)
     const [products, setProducts] = useState<any[]>(props.products || [])
 

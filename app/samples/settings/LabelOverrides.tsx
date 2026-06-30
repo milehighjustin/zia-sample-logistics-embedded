@@ -60,7 +60,6 @@ export default function LabelOverrides(props: any){
         shopify.toast.show('Quantity must be greater than 0', { duration: 3000 })
         return
       }
-      console.log(cloned)
       setPendingLabels(cloned)
       setShowForm(false)
       setPrefillFields({

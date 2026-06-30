@@ -80,7 +80,7 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
         return { address_line1: s1, address_line2: s2 || undefined };
       }
 
-      const formattedStreets = formatShipStationAddressV2(activeOrder.shippingAddress.address1, activeOrder.shippingAddress.address2);
+      const formattedStreets = formatShipStationAddressV2(activeOrder.shippingAddress?.address1, activeOrder.shippingAddress?.address2);
 
 
     const getPrinters = async () => {
@@ -124,6 +124,36 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
         setRates([]);
       }
     };
+
+    const addBox = async (color: string) => {
+      if (!['green', 'blue', 'orange'].includes(color)) {
+        shopify.toast.show("Invalid box color", { duration: 3000 });
+        return;
+      }
+      const clone = structuredClone(activeOrder);
+      const newTemplate = boxes[color as keyof typeof boxes];
+      const newBox = {
+        template: newTemplate,
+        a: 0,
+        b: 0,
+        c: 0,
+        d: 0,
+        e: 0,
+        f: 0,
+        g: 0,
+        h: 0,
+        i: 0,
+        j: 0,
+        k: 0,
+        l: 0,
+        weight: newTemplate.tare,
+        items: [],
+        full: false
+      };
+      clone.boxes.push(newBox);
+      setActiveOrder(clone);
+      setRates([]);
+    }
 
     const deleteBox = async (boxIndex: number) => {
       if(activeOrder.boxes[boxIndex].items.length > 0){
@@ -184,14 +214,14 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
 
     const getRates = async () => {
       const shipTo = {
-        name: activeOrder.shippingAddress.name,
-        phone: activeOrder.shippingAddress.phone || "",
+        name: activeOrder.shippingAddress?.name,
+        phone: activeOrder.shippingAddress?.phone || "+13108441170",
         address_line1: formattedStreets.address_line1,
         address_line2: formattedStreets.address_line2,
-        city_locality: activeOrder.shippingAddress.city || "",
-        state_province: activeOrder.shippingAddress.provinceCode || "",
-        postal_code: activeOrder.shippingAddress.zip || "",
-        country_code: activeOrder.shippingAddress.countryCodeV2
+        city_locality: activeOrder.shippingAddress?.city || "",
+        state_province: activeOrder.shippingAddress?.provinceCode || "",
+        postal_code: activeOrder.shippingAddress?.zip || "",
+        country_code: activeOrder.shippingAddress?.countryCodeV2
       }
 
       if(!shipTo.name || !shipTo.address_line1 || !shipTo.city_locality || !shipTo.state_province || !shipTo.postal_code || !shipTo.country_code){
@@ -271,7 +301,7 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
         ) : null
       }
 
-      if(activeOrder.tags?.includes('Expedited Sample Order')){
+      if(activeOrder.tags?.includes('Expedited Sample Delivery')){
         ratesPayload.serviceCode = 'ups_2nd_day_air';
         ratesPayload.carrierId = 'se-5963767';
       }
@@ -286,7 +316,6 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
             (rate.insurance_amount?.amount || 0);
           return rate;
         }).sort((a: any, b: any) => (a.shipmentTotal || 0) - (b.shipmentTotal || 0));
-        console.log('ratesFound', ratesFound);
         setRates(ratesFound);
       }
     }
@@ -478,8 +507,11 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
               </div>
             </div>
           ))}
-          {rates.length == 0 && !shippingParameters && <div>
-            <div className="w-full flex flex-row justify-end">
+          {rates.length == 0 && !shippingParameters && <div className="w-full justify-end flex flex-row gap-5">
+            <div className="">
+              <Button color="blue" size="md" clickAction={() => addBox('green')}>Add Box</Button>
+            </div>
+            <div className="">
               <Button color="gray" size="md" clickAction={getRates}>Get Rates</Button>
             </div>
           </div>}

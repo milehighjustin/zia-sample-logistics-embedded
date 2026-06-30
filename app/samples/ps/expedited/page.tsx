@@ -9,7 +9,7 @@ export default async function Home() {
   const settings = await ziaBackendCall('settings', 'GET', undefined)
   return (
     <AppShell>
-      <OrderList tag="Expedited Sample Order" printers={printers?.data} settings={settings?.data} />
+      <OrderList tag="Expedited Sample Delivery" printers={printers?.data} settings={settings?.data} />
     </AppShell>
   );
 }

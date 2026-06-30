@@ -78,9 +78,7 @@ export default function BoxPacking(props: any){
 
     const familySelected = (fam: any) => {
       const famName = famRef.current?.value
-      console.log('famName', famName)
       const famProducts = props.products.filter((x: any) => x.sku.split('-')[2] == famName)
-      console.log('famProducts', famProducts)
       const sz = famProducts?.reduce((acc: any[], product: any) => {
         if (!acc.includes(product.sku.split('-')[3])) {
           acc.push(product.sku.split('-')[3]);

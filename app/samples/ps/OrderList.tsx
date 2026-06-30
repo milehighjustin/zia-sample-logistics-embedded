@@ -38,7 +38,6 @@ export default function OrderList(props: { tag: string, printers: any[], setting
     const dir = direction == 'forward' ? 'after' : (direction == 'backward' ? 'before' : '')
     const url = `sampleOps/orders?tag=${encodeURIComponent(props.tag)}&reverse=${reverse}&cursor=${cursor}&dir=${dir}`
     const orders = await ziaBackendCall(url, 'GET', undefined)
-    console.log(orders.data, 'orders')
     const fmt = (structuredClone(orders.data?.orders || [])).map((order:any)=>{
             order.statuses = <div className="flex flex-row gap-2 flex-wrap">
               {order.tags.includes('TRADE-SAMPLE-ORDER') && <BadgeV2 color="yellow">Trade</BadgeV2>}
@@ -56,7 +55,10 @@ export default function OrderList(props: { tag: string, printers: any[], setting
               </div>
               ))}
         </div>
-            order.date = new Date(order.createdAt).toLocaleString()
+            const orderDate = order.date ? new Date(order.date) : null;
+            order.datePretty = (orderDate && !isNaN(orderDate.getTime()))
+              ? `${orderDate.toLocaleDateString('en-US', {timeZone: 'America/Los_Angeles'})} ${orderDate.toLocaleTimeString('en-US', {timeZone: 'America/Los_Angeles'})}`
+              : "Date Unavailable";
             return order
           })
     setDisplayList(fmt)
@@ -80,14 +82,17 @@ export default function OrderList(props: { tag: string, printers: any[], setting
             </div>
             order.boxDisplay = <div className="flex flex-row gap-1 items-center justify-center">
               {order.boxes.map((box: any, index: number)=>(
-                <div key={index}>
-                  <div style={{color: box.template.color == 'orange' ? 'orange' : (box.template.color == 'blue' ? 'blue' : 'green')}}>
-                  <BsFillBoxFill />
-                </div>
-              </div>
-              ))}
-        </div>
-            order.date = new Date(order.createdAt).toLocaleString()
+                      <div key={index}>
+                        <div style={{color: box.template.color == 'orange' ? 'orange' : (box.template.color == 'blue' ? 'blue' : 'green')}}>
+                        <BsFillBoxFill />
+                      </div>
+                    </div>
+                    ))}
+            </div>
+            const orderDate = order.date ? new Date(order.date) : null;
+            order.datePretty = (orderDate && !isNaN(orderDate.getTime()))
+              ? `${orderDate.toLocaleDateString('en-US', {timeZone: 'America/Los_Angeles'})} ${orderDate.toLocaleTimeString('en-US', {timeZone: 'America/Los_Angeles'})}`
+              : "Date Unavailable";
             return order
           })
     setDisplayList(fmt)
@@ -236,8 +241,8 @@ export default function OrderList(props: { tag: string, printers: any[], setting
     <ListContainer>
       <MasterList
           box={true}
-          headers={[{name: 'Order'}, {name: 'Date'}, {name: 'Customer'}, {name: 'Status'}, {name: 'Boxes'}]} 
-          keys={['name', 'date', 'customer', 'statuses', 'boxDisplay']}
+          headers={[{name: 'Order'}, {name: 'Customer'}, {name: 'Date'}, {name: 'Status'}, {name: 'Boxes'}]} 
+          keys={['name', 'customer', 'datePretty', 'statuses', 'boxDisplay']}
           rowClick={true}
           actionFunctions={[
             {name: 'Print'},

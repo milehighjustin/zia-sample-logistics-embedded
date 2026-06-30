@@ -11,7 +11,6 @@ import LabelOverrides from "./LabelOverrides";
 import Products from "./Products";
 
 export default function SettingsContent(props: any) {
-  console.log(props, 'content props')
   const [nav, setNav] = useState<{name: string, current: boolean}[]>([
     {name: 'Default Printers', current: true}, 
     {name: 'Products', current: false},

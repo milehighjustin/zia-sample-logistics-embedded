@@ -11,7 +11,6 @@ export default async function Home() {
   const overrides = await ziaBackendCall('sampleOps/overrides', 'GET', undefined)
   const products = await ziaBackendCall('sampleOps/productList', 'GET', undefined)
   const settings = await ziaBackendCall('settings', 'GET', undefined)
-  console.log(settings, 'settings')
   return (
     <AppShell>
       <SettingsContent printers={printers.data} settings={settings.data} boxPackingRules={boxPackingRules.data} labelCountRules={labelCountRules.data} overrides={overrides.data} products={products.data}></SettingsContent>
