@@ -1,5 +1,5 @@
 "use client"
-import {  useRef, useState } from "react"
+import {  useEffect, useRef, useState } from "react"
 import ziaBackendCall from "@/lib/ziaBackendCall"
 import MasterList from "@/lib/ui/MasterList"
 import ListContainer from "@/lib/ui/ListContainer"
@@ -13,7 +13,19 @@ import papa from "papaparse"
 
 export default function Products(props: any){
     const [loading, setLoading] = useState<boolean>(false)
+    const [ogProducts, setOgProducts] = useState<any[]>(props.products || [])
     const [products, setProducts] = useState<any[]>(props.products || [])
+    const [query, setQuery] = useState('')
+
+    useEffect(()=>{
+      if(query.length > 0){
+        const filtered = ogProducts.filter((product: any) => product.product?.title.toLowerCase().includes(query.toLowerCase()) || product.sku.toLowerCase().includes(query.toLowerCase()))
+        setProducts(filtered)
+      } else {
+        setProducts(ogProducts)
+      }
+    }, [query])
+
 
     const launchRefresh = () => {
       setLoading(true)
@@ -92,7 +104,7 @@ export default function Products(props: any){
     return (
       <PageStandardList>
           <TopBarContainer>
-            <TopBarV2 createFn={launchRefresh} createTitle="Synchronize With Shopify" additionalButtons={[{name: 'CSV', action: generateCsv, icon: TbCsv}]}/>
+            <TopBarV2 liveSearch={true} searchFn={setQuery} createFn={launchRefresh} createTitle="Synchronize With Shopify" additionalButtonsRight={[{name: 'CSV', action: generateCsv, icon: TbCsv}]}/>
           </TopBarContainer>
           <ListContainer>
             <MasterList actionFunctions={[]} actionFunction={()=>{}} list={structuredClone(products).sort((a: any, b: any) => a.product?.title.localeCompare(b.product?.title)).map((x: any) => {

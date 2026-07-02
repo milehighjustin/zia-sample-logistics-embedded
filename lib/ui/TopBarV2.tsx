@@ -102,7 +102,7 @@ export default function TopBarV2(props:{
     )}>
     <div className="flex sm:flex-row flex-col gap-5 items-center">
         {props.additionalButtonsLeft && props.additionalButtonsLeft.map((btn, idx)=>(
-          <Button size="md" color={btn.color || 'gray'} icon={btn.icon} key={idx} clickAction={()=>btn.action()}>
+          <Button size="sm" color={btn.color || 'gray'} icon={btn.icon} key={idx} clickAction={()=>btn.action()}>
             {btn.name}    
           </Button>
         ))}
@@ -133,7 +133,7 @@ export default function TopBarV2(props:{
           <BiRightArrow className="text-gray-700 h-5 w-5 cursor-pointer" onClick={nextFn} />
         </div>}
       {props.helpContent && <div onClick={launchHelp}><QuestionMarkCircleIcon className="h-7 w-7 cursor-pointer" /></div>}
-      <div className="">
+      <div className="flex flex-row gap-2 items-center flex-row-reverse">
         {(props.createList == undefined && (props.createFn != undefined)) &&
         <CreateButton />}
         {Array.isArray(props.createList) && <div></div>}
