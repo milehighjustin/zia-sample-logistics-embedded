@@ -38,6 +38,7 @@ export default function OrderList(props: { tag: string, printers: any[], setting
     const dir = direction == 'forward' ? 'after' : (direction == 'backward' ? 'before' : '')
     const url = `sampleOps/orders?tag=${encodeURIComponent(props.tag)}&reverse=${reverse}&cursor=${cursor}&dir=${dir}`
     const orders = await ziaBackendCall(url, 'GET', undefined)
+    console.log('orders', orders)
     const fmt = (structuredClone(orders.data?.orders || [])).map((order:any)=>{
             order.statuses = <div className="flex flex-row gap-2 flex-wrap">
               {order.tags.includes('TRADE-SAMPLE-ORDER') && <BadgeV2 color="yellow">Trade</BadgeV2>}

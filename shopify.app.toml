@@ -1,7 +1,7 @@
 client_id = "bd002f5a207cd93266c00f18d94008e2"
 # application_url = "https://4prc2qzr-3000.usw2.devtunnels.ms/"
-application_url = "https://zia-sample-logistics-embedded.vercel.app/"
-# application_url = "https://zia-sample-logistics-embedded-git-dev-reb-asecamp.vercel.app/"
+# application_url = "https://zia-sample-logistics-embedded.vercel.app/"
+application_url = "https://zia-sample-logistics-embedded-git-dev-reb-asecamp.vercel.app/"
 embedded = true
 name = "Sample Logistics"
 handle = "sample-logistics"
@@ -16,7 +16,7 @@ scopes = "read_customers,read_orders,read_products,read_locations,read_inventory
 
 [auth]
 redirect_urls = [ "https://4prc2qzr-3000.usw2.devtunnels.ms/api/auth" ]
-
+# redirect_urls = [ "https://zia-sample-logistics-embedded.vercel.app/" ]
 [access.admin]
 direct_api_mode = "online"
 embedded_app_direct_api_access = true
