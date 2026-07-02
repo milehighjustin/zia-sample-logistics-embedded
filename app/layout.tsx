@@ -31,15 +31,16 @@ export default function RootLayout({
         <meta name="shopify-api-key" content={shopifyClientId} />
 <script src="https://cdn.shopify.com/shopifycloud/app-bridge.js" async={false}></script>
       </head>
+
       <body className={` antialiased`}>
         <UiNavMenu>
-          <Link href="/samples/ps/expedited">Expedited Sample Orders</Link>
-          <Link href="/samples/ps/trade">Trade Sample Orders</Link>
-          <Link href="/samples/ps/priority">Priority Sample Orders</Link>
-          <Link href="/samples/ps">All Sample Orders</Link>
-          <Link href="/samples/labels">Create Labels</Link>
-          <Link href="/reporting">Reporting</Link>
-          <Link href="/samples/settings">Settings</Link>
+          <a href="/samples/ps/expedited">Expedited Sample Orders</a>
+          <a href="/samples/ps/trade">Trade Sample Orders</a>
+          <a href="/samples/ps/priority">Priority Sample Orders</a>
+          <a href="/samples/ps">All Sample Orders</a>
+          <a href="/samples/labels">Create Labels</a>
+          <a href="/reporting">Reporting</a>
+          <a href="/samples/settings">Settings</a>
         </UiNavMenu>
         <div className="px-5">{children}</div>
       </body>
