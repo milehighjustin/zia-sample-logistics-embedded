@@ -86,7 +86,7 @@ export default function ManualLabelsContent(props: {products: any[], printers: a
     const printExecute = async () => {
       if(pendingLabels.length > 0){
       shopify.toast.show("Labels Printed", { duration: 3000 });
-      ziaBackendCall('sampleOps/printPacking?printerId='+labelPrinterRef.current?.value, 'POST', [pendingLabels])
+      ziaBackendCall('sampleOps/printLabels?printerId='+labelPrinterRef.current?.value, 'POST', [pendingLabels])
       }
     }
 
