@@ -22,7 +22,6 @@ export default function Shipstation(props: any){
 
     const getCarriers = async () => {
       const result = await ziaBackendCall('sampleOps/carriers', 'GET', {})
-      console.log('carriers', result)
       if(result.data.carriers){
         setCarriers(result.data.carriers)
       }
@@ -35,6 +34,7 @@ export default function Shipstation(props: any){
       setTimeout(async ()=>{
         const result = await ziaBackendCall('settings', 'PUT', {code: 'shipstationAPIKey', value: inputRef.current?.value})
         shopify.toast.show(result.error ? result.error : 'API key updated', { duration: 3000 })
+        const refresh = await ziaBackendCall('settings/refreshCache', 'POST', {})
         getCarriers()
         setLoading(false)
       },1)
@@ -44,8 +44,8 @@ export default function Shipstation(props: any){
       setLoading(true)
       setTimeout(async ()=>{
         const updateObj = {code: 'expeditedShippingCarrierId', value: item}
-        console.log('updateObj', updateObj)
         const result = await ziaBackendCall('settings', 'PUT', updateObj)
+        const refresh = await ziaBackendCall('settings/refreshCache', 'POST', {})
         shopify.toast.show(result.error ? result.error : 'Carrier ID updated', { duration: 3000 })
         setLoading(false)
       },1)
@@ -63,7 +63,7 @@ export default function Shipstation(props: any){
         </SectionBlock>
         {carriers && <SectionBlock title="Expedited Shipping Carrier ID" subText="Select the shipping account to be used for expedited orders. This will be used by the website (Shopify Carrier Service) to generate rates">
             <div className="flex flex-col gap-5 max-w-[300px]">
-              <InputCombobox label="Shipping Printer" subText="A6 Labels (Shipping Labels)" list={structuredClone(carriers || [])?.map((x: any)=>{
+              <InputCombobox label="Select A Carrier" list={structuredClone(carriers || [])?.map((x: any)=>{
                 x.name = `${x.nickname} (${x.account_number})`
                 x.value = x.carrier_id
                 return x
