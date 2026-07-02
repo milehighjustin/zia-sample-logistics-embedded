@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Link from "next/link"; 
 import "./globals.css";
 const shopifyClientId = process.env.shopifyClientId || "missing_client_id";
 const geistSans = Geist({
@@ -29,7 +28,7 @@ export default function RootLayout({
 
       <head>
         <meta name="shopify-api-key" content={shopifyClientId} />
-<script src="https://cdn.shopify.com/shopifycloud/app-bridge.js" async={false}></script>
+        <script src="https://cdn.shopify.com/shopifycloud/app-bridge.js" async={false}></script>
       </head>
 
       <body className={` antialiased`}>
