@@ -187,7 +187,7 @@ export default function OrderList(props: { tag: string, printers: any[], setting
             </div>}
             {activeOrders?.map((orderSelected: any, indexO:number)=>(
               <div style={{marginBottom: '50px'}} key={indexO}>
-                <ShippingDisplay order={orderSelected} orderShipped={orderShipped} />
+                <ShippingDisplay order={orderSelected} orderShipped={orderShipped} settings={props.settings} />
               </div>
             ))}
           </div>

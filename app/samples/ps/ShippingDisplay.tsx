@@ -10,7 +10,7 @@ import InputCombobox from "@/lib/ui/InputCombobox";
 import boxes from "../boxes";
 import ziaBackendCall from "@/lib/ziaBackendCall";
 
-export default function ShippingDisplay(props: { order: any, orderShipped: () => void }) {
+export default function ShippingDisplay(props: { order: any, orderShipped: () => void , settings: any[]}) {
     const [activeOrder, setActiveOrder] = useState<any>(props.order);
     const [editingWeightIndex, setEditingWeightIndex] = useState<number | null>(null);
     const [editingTemplateIndex, setEditingTemplateIndex] = useState<number | null>(null);
@@ -19,7 +19,7 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
     const [rates, setRates] = useState<any[]>([]);
     const [printers, setPrinters] = useState<any[]>([]);
     const [shippingParameters, setShippingParameters] = useState<{carrierId: string, serviceCode: string} | null>(null);
-    const [settings, setSettings] = useState<any[]>([]);
+    const [settings, setSettings] = useState<any[]>(props.settings);
     const templateRef = useRef<HTMLInputElement | null>(null);
     const weightRef = useRef<HTMLInputElement | null>(null);
     const printerRef = useRef<HTMLSelectElement | null>(null);
@@ -303,7 +303,7 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
 
       if(activeOrder.tags?.includes('Expedited Sample Delivery')){
         ratesPayload.serviceCode = 'ups_2nd_day_air';
-        ratesPayload.carrierId = 'se-5963767';
+        ratesPayload.carrierId = settings.find((x:any)=>x.code == 'expeditedShippingCarrierId')?.value || '';
       }
 
       const resp = await ziaBackendCall('sampleOps/shippingRates', 'POST', ratesPayload);
