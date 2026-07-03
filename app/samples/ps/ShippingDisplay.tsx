@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { TfiPackage } from "react-icons/tfi";
-import { FaFedex, FaUps } from "react-icons/fa6";
+import { FaCanadianMapleLeaf, FaFedex, FaUps } from "react-icons/fa6";
 import ProductItem from "./ProductItem";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/20/solid";
 import { BsSave2 } from "react-icons/bs";
@@ -9,8 +9,10 @@ import InputText from "@/lib/ui/InputText";
 import InputCombobox from "@/lib/ui/InputCombobox";
 import boxes from "../boxes";
 import ziaBackendCall from "@/lib/ziaBackendCall";
+import { GiUsaFlag } from "react-icons/gi";
 
 export default function ShippingDisplay(props: { order: any, orderShipped: () => void , settings: any[]}) {
+  console.log(props.order);
     const [activeOrder, setActiveOrder] = useState<any>(props.order);
     const [editingWeightIndex, setEditingWeightIndex] = useState<number | null>(null);
     const [editingTemplateIndex, setEditingTemplateIndex] = useState<number | null>(null);
@@ -250,22 +252,18 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
 
       if(activeOrder.shippingAddress.countryCodeV2 !== 'US'){
         const customsItems = activeOrder.boxes.flatMap((box: any) => 
-          box.items.map((item: any) => ({
-            description: item.title,
-            quantity: 1,
-            value: {
-              amount: item.price || 0,
-              currency: "USD"
-            },
-            harmonized_tariff_code: item.harmonizedSystemCode || undefined,
-            country_of_origin: item.countryCodeOfOrigin || undefined
+          box.items.map((item: any) => ({                                   // Standalone currency key
+            harmonized_tariff_code: item.variant.inventoryItem.harmonizedSystemCode || '6707.21', // Default to 6707.21 if missing
+            country_of_origin: item.variant.inventoryItem.countryCodeOfOrigin || 'US', // Default to US if missing
           }))
         );
         if(customsItems.filter((item: any) => !item.harmonized_tariff_code || !item.country_of_origin).length > 0){
+          // @ts-ignore
           shopify.toast.show("Some items are missing Harmonized Tariff Code or Country of Origin", { duration: 3000 });
           return;
         }
       }
+
 
       interface RatePayload {
         serviceCode?: string;
@@ -289,14 +287,12 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
         boxes: boxesToShip,
         customsItems: activeOrder.shippingAddress.countryCodeV2 !== 'US' ? activeOrder.boxes.flatMap((box: any) => 
           box.items.map((item: any) => ({
-            description: item.title,
-            quantity: 1,
-            value: {
-              amount: item.price || 0,
-              currency: "USD"
-            },
-            harmonized_tariff_code: item.harmonizedSystemCode || undefined,
-            country_of_origin: item.countryCodeOfOrigin || undefined
+            description: item.product.title || "Sample Item",
+            quantity: item.quantity || 1,
+            value: Number(item.originalPrice) > 0 ? Number(item.originalPrice) : 3.53,
+            value_currency: "USD",
+            harmonized_tariff_code: item.variant.inventoryItem.harmonizedSystemCode || '6707.21',
+            country_of_origin: item.variant.inventoryItem.countryCodeOfOrigin || 'US'
           }))
         ) : null
       }
@@ -309,6 +305,7 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
       const resp = await ziaBackendCall('sampleOps/shippingRates', 'POST', ratesPayload);
       if(resp?.data){
         const ratesFound = (resp.data.rate_response?.rates || []).map((rate: any) => {
+          console.log("Rate:", rate);
           rate.shipmentTotal  = 
             (rate.shipping_amount?.amount || 0) +
             (rate.other_amount?.amount || 0) +
@@ -381,16 +378,15 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
       if(activeOrder.shippingAddress.countryCodeV2 !== 'US'){
         const customsItems = activeOrder.boxes.flatMap((box: any) => 
           box.items.map((item: any) => ({
-            description: item.title,
-            quantity: 1,
-            value: {
-              amount: item.price || 0,
-              currency: "USD"
-            },
-            harmonized_tariff_code: item.harmonizedSystemCode || undefined,
-            country_of_origin: item.countryCodeOfOrigin || undefined
+            description: item.product.title,
+            quantity: item.quantity || 1,
+            value: Number(item.originalPrice) > 0 ? Number(item.originalPrice) : 3.53,
+            value_currency: "USD",
+            harmonized_tariff_code: item.variant.inventoryItem.harmonizedSystemCode || '6707.21',
+            country_of_origin: item.variant.inventoryItem.countryCodeOfOrigin || 'US'
           }))
         );
+
         if(customsItems.filter((item: any) => !item.harmonized_tariff_code || !item.country_of_origin).length > 0){
           shopify.toast.show("Some items are missing Harmonized Tariff Code or Country of Origin", { duration: 3000 });
           return;
@@ -415,6 +411,34 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
 
     return (
         <div className="flex flex-col gap-5">
+          <div className="flex flex-row justify-between items-stretch gap-2">
+            <div className="basis-1/2 flex flex-col justify-start items-start gap-1 ring-1 rounded-lg ring-gray-200 p-3">
+              <div className="text-2xl font-bold">Shipping Address</div>
+              <div>{activeOrder.shippingAddress?.name}</div>
+              <div>{formattedStreets.address_line1}</div>
+              {formattedStreets.address_line2 && <div>{formattedStreets.address_line2}</div>}
+              <div>{activeOrder.shippingAddress?.city}, {activeOrder.shippingAddress?.provinceCode} {activeOrder.shippingAddress?.zip}</div>
+              <div className="flex flex-row items-center gap-2">{activeOrder.shippingAddress?.countryCodeV2} {activeOrder.shippingAddress?.countryCodeV2 == 'CA' && <FaCanadianMapleLeaf />}{activeOrder.shippingAddress?.countryCodeV2 == 'US' && <GiUsaFlag />} </div>
+              <div>{activeOrder.shippingAddress?.phone}</div>
+            </div>
+
+            <div className="basis-1/2 flex flex-col justify-start items-center gap-5 ring-1 rounded-lg ring-gray-200 p-3">
+              <div className="text-2xl font-bold">Shipping Selected</div>
+              {activeOrder.shippingLines?.length > 0 ? (
+                <div className="flex flex-col gap-2">
+                  {activeOrder.shippingLines.map((line: any, index: number) => (
+                    <div key={index} className="flex flex-row items-center gap-2 w-full justify-between p-2 ring-1 ring-gray-300 rounded-md">
+                      <div>{line.node.title}</div>
+                      <div>${line.node.discountedPriceSet?.shopMoney?.amount || 0} {line.node.discountedPriceSet?.shopMoney?.currencyCode || 'USD'}</div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div>No shipping lines available</div>
+              )}
+            </div>
+          </div>
+          <div className="text-2xl font-bold w-full text-center">Boxes To Ship</div>
           {activeOrder?.boxes?.map((box: any, indexB: number) => (
             <div style={{ marginBottom: '25px' }} key={indexB}>
               <div>
@@ -522,9 +546,11 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
                 <div className="basis-1/5">
                   {rate.carrier_code === 'ups' && <FaUps className="h-8 w-8" />}
                   {rate.carrier_code === 'fedex' && <FaFedex className="h-8 w-8" />}
+                  {rate.carrier_code !== 'ups' && rate.carrier_code !== 'fedex' && <span className="text-sm font-semibold">{rate.carrier_friendly_name}</span>}
                 </div>
-                <div className="basis-2/5">
-                  {rate.carrier_delivery_days}
+                <div className="basis-2/5 flex flex-col justify-start items-start">
+                  <div className="font-bold">{rate.service_type}</div>
+                  <div>{rate.carrier_delivery_days}</div>
                 </div>
                 <div className="basis-1/5">
                   ${rate.shipmentTotal?.toFixed(2) || '0.00'}
