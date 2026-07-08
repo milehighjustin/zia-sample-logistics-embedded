@@ -252,13 +252,12 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
 
       if(activeOrder.shippingAddress.countryCodeV2 !== 'US'){
         const customsItems = activeOrder.boxes.flatMap((box: any) => 
-          box.items.map((item: any) => ({                                   // Standalone currency key
-            harmonized_tariff_code: item.variant.inventoryItem.harmonizedSystemCode || '6707.21', // Default to 6707.21 if missing
-            country_of_origin: item.variant.inventoryItem.countryCodeOfOrigin || 'US', // Default to US if missing
+          box.items.map((item: any) => ({
+            harmonized_tariff_code: item.variant.inventoryItem.harmonizedSystemCode || undefined,
+            country_of_origin: item.variant.inventoryItem.countryCodeOfOrigin || undefined,
           }))
         );
         if(customsItems.filter((item: any) => !item.harmonized_tariff_code || !item.country_of_origin).length > 0){
-          // @ts-ignore
           shopify.toast.show("Some items are missing Harmonized Tariff Code or Country of Origin", { duration: 3000 });
           return;
         }
@@ -291,8 +290,8 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
             quantity: item.quantity || 1,
             value: Number(item.originalPrice) > 0 ? Number(item.originalPrice) : 3.53,
             value_currency: "USD",
-            harmonized_tariff_code: item.variant.inventoryItem.harmonizedSystemCode || '6707.21',
-            country_of_origin: item.variant.inventoryItem.countryCodeOfOrigin || 'US'
+            harmonized_tariff_code: item.variant.inventoryItem.harmonizedSystemCode || undefined,
+            country_of_origin: item.variant.inventoryItem.countryCodeOfOrigin || undefined
           }))
         ) : null
       }
