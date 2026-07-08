@@ -381,8 +381,8 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
             quantity: item.quantity || 1,
             value: Number(item.originalPrice) > 0 ? Number(item.originalPrice) : 3.53,
             value_currency: "USD",
-            harmonized_tariff_code: item.variant.inventoryItem.harmonizedSystemCode || '6707.21',
-            country_of_origin: item.variant.inventoryItem.countryCodeOfOrigin || 'US'
+            harmonized_tariff_code: item.variant.inventoryItem.harmonizedSystemCode || undefined,
+            country_of_origin: item.variant.inventoryItem.countryCodeOfOrigin || undefined
           }))
         );
 
