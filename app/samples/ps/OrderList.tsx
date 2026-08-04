@@ -46,6 +46,11 @@ export default function OrderList(props: { tag: string, printers: any[], setting
               {order.fulfillmentStatus == 'UNFULFILLED' && <BadgeV2 color="blue">Unfulfilled</BadgeV2>}
               {order.fulfillmentStatus == 'PARTIALLY_FULFILLED' && <BadgeV2 color="orange">Partially Fulfilled</BadgeV2>}
             </div>
+            order.shippingTags = <div className="flex flex-row gap-2 flex-wrap">
+              {order.tags.includes('UPS 2nd Day Air') && <BadgeV2 color="blue">UPS 2nd Day Air</BadgeV2>}
+              {order.tags.includes('UPS Next Day Air') && <BadgeV2 color="blue">UPS Next Day Air</BadgeV2>}
+              {order.tags.includes('Standard Sample Shipping') && <BadgeV2 color="blue">Standard</BadgeV2>}
+            </div>
             order.boxDisplay = <div className="flex flex-row gap-1 items-center justify-center">
               {order.boxes.map((box: any, index: number)=>(
                 <div key={index}>
@@ -79,6 +84,11 @@ export default function OrderList(props: { tag: string, printers: any[], setting
               {order.fulfillmentStatus == 'FULFILLED' && <BadgeV2 color="green">Fulfilled</BadgeV2>}
               {order.fulfillmentStatus == 'UNFULFILLED' && <BadgeV2 color="blue">Unfulfilled</BadgeV2>}
               {order.fulfillmentStatus == 'PARTIALLY_FULFILLED' && <BadgeV2 color="orange">Partially Fulfilled</BadgeV2>}
+            </div>
+            order.shippingTags = <div className="flex flex-row gap-2 flex-wrap">
+              {order.tags.includes('UPS 2nd Day Air') && <BadgeV2 color="blue">UPS 2nd Day Air</BadgeV2>}
+              {order.tags.includes('UPS Next Day Air') && <BadgeV2 color="blue">UPS Next Day Air</BadgeV2>}
+              {order.tags.includes('Standard Sample Shipping') && <BadgeV2 color="blue">Standard</BadgeV2>}
             </div>
             order.boxDisplay = <div className="flex flex-row gap-1 items-center justify-center">
               {order.boxes.map((box: any, index: number)=>(
@@ -258,8 +268,8 @@ export default function OrderList(props: { tag: string, printers: any[], setting
     <ListContainer>
       <MasterList
           box={true}
-          headers={[{name: 'Order'}, {name: 'Customer'}, {name: 'Date'}, {name: 'Status'}, {name: 'Boxes'}]} 
-          keys={['name', 'customer', 'datePretty', 'statuses', 'boxDisplay']}
+          headers={[{name: 'Order'}, {name: 'Customer'}, {name: 'Date'}, {name: 'Status'}, {name: 'Shipping'}, {name: 'Boxes'}]} 
+          keys={['name', 'customer', 'datePretty', 'statuses', 'shippingTags', 'boxDisplay']}
           rowClick={true}
           actionFunctions={[
             {name: 'Print'},

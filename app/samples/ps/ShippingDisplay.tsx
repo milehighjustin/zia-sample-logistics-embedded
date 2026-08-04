@@ -296,8 +296,13 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
         ) : null
       }
 
-      if(activeOrder.tags?.includes('Expedited Sample Delivery')){
+      if(activeOrder.tags?.includes('UPS 2nd Day Air')){
         ratesPayload.serviceCode = 'ups_2nd_day_air';
+        ratesPayload.carrierId = settings.find((x:any)=>x.code == 'expeditedShippingCarrierId')?.value || '';
+      }
+
+      if(activeOrder.tags?.includes('UPS Next Day Air')){
+        ratesPayload.serviceCode = 'ups_next_day_air';
         ratesPayload.carrierId = settings.find((x:any)=>x.code == 'expeditedShippingCarrierId')?.value || '';
       }
 
