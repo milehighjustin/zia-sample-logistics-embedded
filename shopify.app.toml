@@ -17,6 +17,7 @@ scopes = "read_customers,read_orders,read_products,read_locations,read_inventory
 [auth]
 # redirect_urls = [ "https://4prc2qzr-3000.usw2.devtunnels.ms/api/auth" ]
 redirect_urls = [ "https://zia-sample-logistics-embedded.vercel.app/" ]
+
 [access.admin]
 direct_api_mode = "online"
 embedded_app_direct_api_access = true

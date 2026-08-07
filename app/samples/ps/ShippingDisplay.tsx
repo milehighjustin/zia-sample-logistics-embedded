@@ -12,7 +12,6 @@ import ziaBackendCall from "@/lib/ziaBackendCall";
 import { GiUsaFlag } from "react-icons/gi";
 
 export default function ShippingDisplay(props: { order: any, orderShipped: () => void , settings: any[]}) {
-  console.log(props.order);
     const [activeOrder, setActiveOrder] = useState<any>(props.order);
     const [editingWeightIndex, setEditingWeightIndex] = useState<number | null>(null);
     const [editingTemplateIndex, setEditingTemplateIndex] = useState<number | null>(null);
@@ -309,7 +308,6 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
       const resp = await ziaBackendCall('sampleOps/shippingRates', 'POST', ratesPayload);
       if(resp?.data){
         const ratesFound = (resp.data.rate_response?.rates || []).map((rate: any) => {
-          console.log("Rate:", rate);
           rate.shipmentTotal  = 
             (rate.shipping_amount?.amount || 0) +
             (rate.other_amount?.amount || 0) +

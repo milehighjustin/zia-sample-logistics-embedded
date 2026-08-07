@@ -14,7 +14,6 @@ export default async function ziaBackendCall(route: string, method: string, data
     request.body = JSON.stringify(data)
   }
   const url = `${process.env.NEXT_PUBLIC_APIURL}/${route}`
-  console.log(url)
   const response = await fetch(url, request).then(res => res.json()).catch(e=>{
     return {error: 'Could not communicate with system'}
   })
