@@ -10,6 +10,7 @@ import InputCombobox from "@/lib/ui/InputCombobox";
 import boxes from "../boxes";
 import ziaBackendCall from "@/lib/ziaBackendCall";
 import { GiUsaFlag } from "react-icons/gi";
+import EndlessSpinV2 from "@/lib/ui/EndlessSpinV2";
 
 export default function ShippingDisplay(props: { order: any, orderShipped: () => void , settings: any[]}) {
     const [activeOrder, setActiveOrder] = useState<any>(props.order);
@@ -18,6 +19,7 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
     const [weightError, setWeightError] = useState<boolean>(false);
     const [draggingOverBoxIndex, setDraggingOverBoxIndex] = useState<number | null>(null);
     const [rates, setRates] = useState<any[]>([]);
+    const [gettingRates, setGettingRates] = useState<boolean>(false);
     const [printers, setPrinters] = useState<any[]>([]);
     const [shippingParameters, setShippingParameters] = useState<{carrierId: string, serviceCode: string} | null>(null);
     const [settings, setSettings] = useState<any[]>(props.settings);
@@ -214,6 +216,7 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
     };
 
     const getRates = async () => {
+      setGettingRates(true);
       const shipTo = {
         name: activeOrder.shippingAddress?.name,
         phone: activeOrder.shippingAddress?.phone || "+13108441170",
@@ -305,18 +308,21 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
         ratesPayload.carrierId = settings.find((x:any)=>x.code == 'expeditedShippingCarrierId')?.value || '';
       } */
 
-      const resp = await ziaBackendCall('sampleOps/shippingRates', 'POST', ratesPayload);
-      if(resp?.data){
-        const ratesFound = (resp.data.rate_response?.rates || []).map((rate: any) => {
-          rate.shipmentTotal  = 
-            (rate.shipping_amount?.amount || 0) +
-            (rate.other_amount?.amount || 0) +
-            (rate.confirmation_amount?.amount || 0) +
-            (rate.insurance_amount?.amount || 0);
-          return rate;
-        }).sort((a: any, b: any) => (a.shipmentTotal || 0) - (b.shipmentTotal || 0));
-        setRates(ratesFound);
-      }
+      setTimeout(async ()=>{
+        const resp = await ziaBackendCall('sampleOps/shippingRates', 'POST', ratesPayload);
+        if(resp?.data){
+          const ratesFound = (resp.data.rate_response?.rates || []).map((rate: any) => {
+            rate.shipmentTotal  = 
+              (rate.shipping_amount?.amount || 0) +
+              (rate.other_amount?.amount || 0) +
+              (rate.confirmation_amount?.amount || 0) +
+              (rate.insurance_amount?.amount || 0);
+            return rate;
+          }).sort((a: any, b: any) => (a.shipmentTotal || 0) - (b.shipmentTotal || 0));
+          setRates(ratesFound);
+        }
+        setGettingRates(false);
+      },1)
     }
 
     const beginShip = async (rate: any) => {
@@ -541,6 +547,11 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
               <Button color="gray" size="md" clickAction={getRates}>Get Rates</Button>
             </div>
           </div>}
+
+          {gettingRates && <div className="w-full flex justify-center items-center">
+            <EndlessSpinV2 />
+          </div>}
+
 
           {(activeOrder.tags.includes('UPS 2nd Day Air') || activeOrder.tags.includes('UPS Next Day Air')) && <div>
             {rates.filter((x:any)=>(x.service_code === (activeOrder.tags.includes('UPS 2nd Day Air') ? 'ups_2nd_day_air' : 'ups_next_day_air'))).map((rate, index) => (
