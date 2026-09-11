@@ -295,7 +295,7 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
         ) : null
       }
 
-      if(activeOrder.tags?.includes('UPS 2nd Day Air')){
+/*       if(activeOrder.tags?.includes('UPS 2nd Day Air')){
         ratesPayload.serviceCode = 'ups_2nd_day_air';
         ratesPayload.carrierId = settings.find((x:any)=>x.code == 'expeditedShippingCarrierId')?.value || '';
       }
@@ -303,7 +303,7 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
       if(activeOrder.tags?.includes('UPS Next Day Air')){
         ratesPayload.serviceCode = 'ups_next_day_air';
         ratesPayload.carrierId = settings.find((x:any)=>x.code == 'expeditedShippingCarrierId')?.value || '';
-      }
+      } */
 
       const resp = await ziaBackendCall('sampleOps/shippingRates', 'POST', ratesPayload);
       if(resp?.data){
@@ -540,6 +540,29 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
             <div className="">
               <Button color="gray" size="md" clickAction={getRates}>Get Rates</Button>
             </div>
+          </div>}
+
+          {(activeOrder.tags.includes('UPS 2nd Day Air') || activeOrder.tags.includes('UPS Next Day Air')) && <div>
+            {rates.filter((x:any)=>(x.service_code === 'ups_2nd_day_air' || x.service_code === 'ups_next_day_air')).map((rate, index) => (
+              <div key={index} className="flex flex-row justify-between items-center w-full ring-1 ring-gray-200 rounded-lg p-3">
+                <div className="basis-1/5">
+                  {rate.carrier_code === 'ups' && <FaUps className="h-8 w-8" />}
+                  {rate.carrier_code === 'fedex' && <FaFedex className="h-8 w-8" />}
+                  {rate.carrier_code !== 'ups' && rate.carrier_code !== 'fedex' && <span className="text-sm font-semibold">{rate.carrier_friendly_name}</span>}
+                </div>
+                <div className="basis-2/5 flex flex-col justify-start items-start">
+                  <div className="font-bold">{rate.service_type}</div>
+                  <div>{rate.carrier_delivery_days}</div>
+                </div>
+                <div className="basis-1/5">
+                  ${rate.shipmentTotal?.toFixed(2) || '0.00'}
+                </div>
+                <div className="basis-1/5">
+                  <Button color="green" size="md" clickAction={() => beginShip(rate)}>Ship</Button>
+                </div>
+              </div>
+            ))}  
+            
           </div>}
 
           {rates.length > 0 && <div className="flex flex-col justify-between items-center gap-5">
