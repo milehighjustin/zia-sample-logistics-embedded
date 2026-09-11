@@ -551,7 +551,7 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
           {gettingRates && <div className="w-full flex justify-center items-center">
             <EndlessSpinV2 />
           </div>}
-          {(activeOrder.tags.includes('UPS 2nd Day Air') || activeOrder.tags.includes('UPS Next Day Air')) && <div className="w-full flex items-center">
+          {(rates.length > 0 && (activeOrder.tags.includes('UPS 2nd Day Air') || activeOrder.tags.includes('UPS Next Day Air'))) && <div className="font-bold w-full flex items-center">
             Expedited Service Selected:
           </div>}
 
@@ -578,7 +578,7 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
             
           </div>}
 
-          {(activeOrder.tags.includes('UPS 2nd Day Air') || activeOrder.tags.includes('UPS Next Day Air')) && <div className="mt-10 w-full flex items-center">
+          {(rates.length > 0 && (activeOrder.tags.includes('UPS 2nd Day Air') || activeOrder.tags.includes('UPS Next Day Air'))) && <div className="mt-10 w-full flex items-center">
             <div className="font-bold">
               Available Services:
             </div>
