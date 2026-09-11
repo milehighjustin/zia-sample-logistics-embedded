@@ -543,7 +543,7 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
           </div>}
 
           {(activeOrder.tags.includes('UPS 2nd Day Air') || activeOrder.tags.includes('UPS Next Day Air')) && <div>
-            {rates.filter((x:any)=>(x.service_code === 'ups_2nd_day_air' || x.service_code === 'ups_next_day_air')).map((rate, index) => (
+            {rates.filter((x:any)=>(x.service_code === (activeOrder.tags.includes('UPS 2nd Day Air') ? 'ups_2nd_day_air' : 'ups_next_day_air'))).map((rate, index) => (
               <div key={index} className="flex flex-row justify-between items-center w-full ring-1 ring-gray-200 rounded-lg p-3">
                 <div className="basis-1/5">
                   {rate.carrier_code === 'ups' && <FaUps className="h-8 w-8" />}
