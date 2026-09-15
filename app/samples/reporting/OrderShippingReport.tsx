@@ -118,7 +118,7 @@ export default function OrderShippingReport(props: {tag: string}) {
             ...[{isDivider: true, name: 'Totals'}],
             ...[{
               name: 'Total',
-              orders: data.summary?.orders,
+              orders: data.summary?.orderCount,
               shippingMargin: `$${data.summary?.margin}`,
               shippingCharged: `$${data.summary?.shippingCharged}`,
               labelCost: `$${data.summary?.labelCost}`,

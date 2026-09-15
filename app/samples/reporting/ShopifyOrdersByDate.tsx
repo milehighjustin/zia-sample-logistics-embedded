@@ -106,6 +106,7 @@ export default function ShopifyOrdersByDate(props: {tag: string}) {
       </TopBarContainer>
       <ListContainer>
         {data && <MasterList
+          hideHeader={true}
           list={[
             { name: 'Order Count', value: data?.summary?.orderCount },
             { name: 'Item Count', value: data?.summary?.itemCount },
