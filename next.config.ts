@@ -14,6 +14,7 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  allowedDevOrigins: ['air3000.rebasecamp.com'],
   experimental: {
     serverActions: {
       allowedOrigins: [

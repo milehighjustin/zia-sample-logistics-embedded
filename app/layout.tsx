@@ -38,7 +38,7 @@ export default function RootLayout({
           <a href="/samples/ps/priority">Priority Sample Orders</a>
           <a href="/samples/ps">All Sample Orders</a>
           <a href="/samples/labels">Create Labels</a>
-          <a href="/reporting">Reporting</a>
+          <a href="/samples/reporting">Reporting</a>
           <a href="/samples/settings">Settings</a>
         </UiNavMenu>
         <div className="px-5">{children}</div>

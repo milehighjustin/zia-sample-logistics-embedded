@@ -1,0 +1,26 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "41c9d083837e1449bacc7221a0f5f236"
+name = "Sample Logistics Dev"
+application_url = "https://air3000.rebasecamp.com/"
+embedded = true
+handle = "sample-logistics-dev"
+
+[build]
+
+[webhooks]
+api_version = "2026-07"
+
+[access_scopes]
+scopes = "read_customers,read_orders,read_products,read_locations,read_inventory,write_orders,read_merchant_managed_fulfillment_orders,write_merchant_managed_fulfillment_orders"
+
+[auth]
+# redirect_urls = [ "https://4prc2qzr-3000.usw2.devtunnels.ms/api/auth" ]
+redirect_urls = [ "https://air3000.rebasecamp.com/" ]
+
+[access.admin]
+direct_api_mode = "online"
+embedded_app_direct_api_access = true
+
+[pos]
+embedded = false

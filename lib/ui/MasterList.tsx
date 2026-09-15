@@ -189,7 +189,7 @@ export default function MasterList(props: {
                     className={classNames(
                       item.isDivider ? 'bg-gray-700 dark:bg-white/50 text-white' : '',
                       indexK + 1 == props.headers?.length ? (props.actionFunctions.length > 0 ? 'text-left' : (props.alignFinalRight ? 'text-right' : 'text-left')) : 'text-left',
-                      indexK == 0 ? "text-left whitespace-nowrap text-sm font-medium text-gray-900" : "whitespace-normal",
+                      indexK == 0 ? "text-left whitespace-nowrap text-sm font-bold text-gray-900" : "whitespace-normal",
                       indexK == 0 ? (props.stickyX ? "overflow-x-auto sticky left-0 backdrop-blur-sm backdrop-filter" : "px-3") : '',
                       props.textXs ? 'text-xs' : 'text-sm',
                       item.textColor ? `text-${item.textColor}-700` : 'dark:text-gray-50 text-gray-600',
