@@ -9,11 +9,12 @@ import MasterList from "@/lib/ui/MasterList";
 import PageStandard from "@/lib/ui/PageStandard";
 import TopBarContainer from "@/lib/ui/TopBarContainer";
 import ziaBackendCall from "@/lib/ziaBackendCall";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-export default function ShipstationOrdersByDate(props: {carrierIds?: string, serviceCodes?: string, serviceProviders?: string, }) {
+export default function ShipstationOrdersByDate(props: {carrierIds?: string, serviceCodes?: string, serviceProviders?: string, carriers?: any[] }) {
     const [loading, setLoading] = useState<boolean>(false)
     const [data, setData] = useState<any>(null)
+
 
     const getToday = () => {
         setLoading(true)
@@ -153,8 +154,8 @@ export default function ShipstationOrdersByDate(props: {carrierIds?: string, ser
             { name: 'Total Cost', value: `$${data?.summary?.totalCost}` },
           ], ...[{isDivider: true, name: 'By Service'}], 
           ...(Object.entries(data?.summary?.byService || {}).map(([key, value]: [string, any]) => ({ name: key, value: `${value.labelCount} / $${value.totalCost}` }))), 
-          ...[{isDivider: true, name: 'By Carrier ID'}],
-          ...(Object.entries(data?.summary?.byCarrier || {}).map(([key, value]: [string, any]) => ({ name: key, value: `${value.labelCount} / $${value.totalCost}` }))),
+          ...[{isDivider: true, name: 'By Account'}],
+          ...(Object.entries(data?.summary?.byCarrier || {}).map(([key, value]: [string, any]) => ({ name: `${props.carriers?.find(carrier => carrier.carrier_id === key)?.nickname || key} (${props.carriers?.find(carrier => carrier.carrier_id === key)?.account_number || '-'})`, value: `${value.labelCount} / $${value.totalCost}` }))),
           ...[{isDivider: true, name: 'By Carrier'}],
           ...(Object.entries(data?.summary?.byCarrierName || {}).map(([key, value]: [string, any]) => ({ name: key, value: `${value.labelCount} / $${value.totalCost}` })))
         ]}

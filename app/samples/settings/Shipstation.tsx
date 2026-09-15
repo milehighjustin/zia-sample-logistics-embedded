@@ -2,6 +2,7 @@
 import Button from "@/lib/ui/Button"
 import InputCombobox from "@/lib/ui/InputCombobox"
 import InputText from "@/lib/ui/InputText"
+import MasterList from "@/lib/ui/MasterList"
 import PageStandard from "@/lib/ui/PageStandard"
 import SectionBlock from "@/lib/ui/SectionBlock"
 import ziaBackendCall from "@/lib/ziaBackendCall"
@@ -69,6 +70,22 @@ export default function Shipstation(props: any){
                 return x
               })} selectedItem={(item: any)=>carrierIdUpdate(item)} defaultValue={props.settings.find((x: any)=>x.code == 'expeditedShippingCarrierId')?.value}/>
             </div>
+        </SectionBlock>}
+        {carriers && <SectionBlock title="Carriers" subText="Carrier accounts registered with Shipstation">
+            <MasterList
+              shadedRows={true}
+              hideHeader={true}
+              list={structuredClone(carriers || [])?.map((x: any)=>{
+                x.name = `${x.nickname} (${x.account_number})`
+                x.value = x.carrier_id
+                return x
+              })}
+              alignFinalRight={true}
+              actionFunction={() => {}}
+              actionFunctions={[]}
+              headers={[{ name: 'Carrier'}, { name: '' }]}
+              keys={['name', 'value']}
+            />
         </SectionBlock>}
       </PageStandard>
     )

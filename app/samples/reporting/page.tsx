@@ -43,10 +43,10 @@ export default async function Home(props: any) {
 
   const printers = await ziaBackendCall('print/printers', 'GET', undefined)
   const settings = await ziaBackendCall('settings', 'GET', undefined)
-
+  const carriers = (await ziaBackendCall('sampleOps/carriers', 'GET', undefined))?.data?.carriers || []
   return (
     <AppShell>
-      <ReportingContent />
+      <ReportingContent carriers={carriers} />
     </AppShell>
   );
 }
