@@ -4,8 +4,8 @@ import PageStandardSideNav from "@/lib/ui/PageStandardSideNav";
 import { useRef, useState } from "react";
 import ShopifyOrdersByDate from "./ShopifyOrdersByDate";
 import ShipstationOrdersByDate from "./ShipstationOrdersByDate";
-import ShippingMarginOrdersByDate from "./ShippingMarginOrdersByDate";
 import OrderShippingReport from "./OrderShippingReport";
+import CompedShippingReport from "./CompedShippingReport";
 
 export default function ReportingContent(props: { carriers: any[] }) {
     const [loading, setLoading] = useState<boolean>(false)
@@ -21,6 +21,8 @@ export default function ReportingContent(props: { carriers: any[] }) {
         { id: 'orderShippingReport', name: 'Order Shipping Report' },
         { id: 'expeditedOrderShippingReport', name: 'Expedited Order Shipping Report' },
         { id: 'standardOrderShippingReport', name: 'Standard Order Shipping Report' },
+        { id: 'compedShipmentsByDate', name: 'Comped Shipments Report' },
+        { id: 'shipmentsByUser', name: 'Shipments By User' }
     ])
 
 
@@ -43,6 +45,7 @@ export default function ReportingContent(props: { carriers: any[] }) {
       {nav.find((item:any) => item.current)?.id === 'orderShippingReport' && <OrderShippingReport tag="Sample%20Order" />}
       {nav.find((item:any) => item.current)?.id === 'expeditedOrderShippingReport' && <OrderShippingReport tag="Expedited%20Sample%20Delivery" />}
       {nav.find((item:any) => item.current)?.id === 'standardOrderShippingReport' && <OrderShippingReport tag="Standard%20Sample%20Delivery" />}
+      {nav.find((item:any) => item.current)?.id === 'compedShipmentsByDate' && <CompedShippingReport tag={"Sample%20Order"} />}
     </PageStandardSideNav>
   );
 }
