@@ -146,6 +146,7 @@ export default function ShipstationOrdersByDate(props: {carrierIds?: string, ser
       </TopBarContainer>
       <ListContainer>
         {data && <MasterList
+          shadedRows={true}
           hideHeader={true}
           list={[...[{isDivider: true, name: 'Total  Shipments'}], ...[
             { name: 'Shipments', value: data?.summary?.labelCount },

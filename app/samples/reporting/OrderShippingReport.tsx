@@ -106,6 +106,7 @@ export default function OrderShippingReport(props: {tag: string}) {
       </TopBarContainer>
       <ListContainer>
         {data && <MasterList
+          shadedRows={true}
           list={[
             ...[{isDivider: true, name: 'By Day'}],
             ...(Object.keys(data.summary?.byDay || {}).map(key => ({ 
