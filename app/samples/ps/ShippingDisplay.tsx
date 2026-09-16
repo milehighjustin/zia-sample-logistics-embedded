@@ -440,6 +440,7 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
                       <div>${line.node.discountedPriceSet?.shopMoney?.amount || 0} {line.node.discountedPriceSet?.shopMoney?.currencyCode || 'USD'}</div>
                     </div>
                   ))}
+                  <div className="w-full text-center font-bold">{activeOrder?.customAttributeMap?.['Arrival Window']}</div>
                 </div>
               ) : (
                 <div>No shipping lines available</div>
