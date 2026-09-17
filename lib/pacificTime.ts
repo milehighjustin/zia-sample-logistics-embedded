@@ -39,7 +39,7 @@ export function createdBeforeExpeditedCutoff(createdAt?: string | null): boolean
 
 /**
  * Expedited orders that still need shipping and were created before the 11:00am
- * Pacific cutoff. Expects rows from `ops/shopifyOrdersByTagByDateByStatus`,
+ * Pacific cutoff. Expects rows from `reports/shopifyOrdersByTagByDateByStatus`,
  * which is already scoped to the day and (with status=open) to open orders.
  */
 export function countExpeditedToShip(orders: any[] | null | undefined): number {

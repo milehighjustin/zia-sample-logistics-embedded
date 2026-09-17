@@ -14,6 +14,7 @@ import EndlessSpinV2 from "@/lib/ui/EndlessSpinV2";
 import ShippingDisplay from "./ShippingDisplay";
 import PrintDisplay from "./PrintDisplay";
 import Button from "@/lib/ui/Button";
+import OrderDisplay from "./OrderDisplay";
 
 export default function OrderList(props: { tag: string, printers: any[], settings: any, search?: boolean }) {
   const [orders, setOrders] = useState<any[]>([])
@@ -113,6 +114,11 @@ export default function OrderList(props: { tag: string, printers: any[], setting
   }
 
 
+  // Action cells render inside the row, so a click on "Ship"/"Print" also
+  // bubbles up to the row's click handler. Marking the action briefly keeps the
+  // row handler from also opening the order detail modal.
+  const rowActionRef = useRef<boolean>(false)
+
   const actionFn = (action: any, item: any) => {
     if (!orders || !Array.isArray(orders)) {
       console.warn("Order list is not populated yet.");
@@ -124,6 +130,18 @@ export default function OrderList(props: { tag: string, printers: any[], setting
       console.warn("Order not found.");
       return;
     }
+    if(action.name == 'rowClick'){
+      if(rowActionRef.current){
+        return
+      }
+      setActiveOrders([order])
+      setShowOrderModal(true)
+      return
+    }
+
+    rowActionRef.current = true
+    setTimeout(()=>{ rowActionRef.current = false }, 0)
+
     if(action.name == 'Ship'){
       setShowShippingModal(true)
       setActiveOrders([order])
@@ -188,20 +206,10 @@ export default function OrderList(props: { tag: string, printers: any[], setting
       open={showOrderModal}
       onHide={()=>{setShowOrderModal(false); setActiveOrders([])}}
     >
-      <TitleBar title={'Ship Order'}>
+      <TitleBar title={'Order ' + (activeOrders?.[0]?.name || '')}>
       </TitleBar>
           <div className="p-5 relative mb-10">
-            {activeOrders == undefined && <div className="w-full flex flex-row justify-center my-10">
-              <div className="w-full flex flex-col gap-10 items-center justify-center">
-                <div className="text-2xl">Gathering shipping rates from Shipstation</div>
-                <EndlessSpinV2 />
-              </div>  
-            </div>}
-            {activeOrders?.map((orderSelected: any, indexO:number)=>(
-              <div style={{marginBottom: '50px'}} key={indexO}>
-                <ShippingDisplay order={orderSelected} orderShipped={orderShipped} settings={props.settings} />
-              </div>
-            ))}
+            <OrderDisplay orderId={activeOrders?.[0]?.name || ''} />
           </div>
     </Modal>
 

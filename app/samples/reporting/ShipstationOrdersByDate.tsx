@@ -27,7 +27,7 @@ export default function ShipstationOrdersByDate(props: {carrierIds?: string, ser
             const day = String(t.getDate()).padStart(2, '0');
 
             const today = `${year}-${month}-${day}`
-            var query = `ops/labelSpendReport?startDate=${today}&endDate=${today}&format=json`
+            var query = `reports/labelSpendReport?startDate=${today}&endDate=${today}&format=json`
             if(props.carrierIds) {
                 query += `&carrierIds=${props.carrierIds}`
             }
@@ -50,7 +50,7 @@ export default function ShipstationOrdersByDate(props: {carrierIds?: string, ser
             const startOfWeek = new Date();
             startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
             const startDate = startOfWeek.toISOString().split('T')[0];
-            var query = `ops/labelSpendReport?startDate=${startDate}&endDate=${today}&format=json`
+            var query = `reports/labelSpendReport?startDate=${startDate}&endDate=${today}&format=json`
             if(props.carrierIds) {
                 query += `&carrierIds=${props.carrierIds}`
             }
@@ -74,7 +74,7 @@ export default function ShipstationOrdersByDate(props: {carrierIds?: string, ser
             const startOf30Days = new Date();
             startOf30Days.setDate(startOf30Days.getDate() - 30);
             const startDate = startOf30Days.toISOString().split('T')[0];
-            var query = `ops/labelSpendReport?startDate=${startDate}&endDate=${today}&format=json`
+            var query = `reports/labelSpendReport?startDate=${startDate}&endDate=${today}&format=json`
             if(props.carrierIds) {
                 query += `&carrierIds=${props.carrierIds}`
             }
@@ -96,7 +96,7 @@ export default function ShipstationOrdersByDate(props: {carrierIds?: string, ser
             if (startDate && endDate) {
                 setLoading(true)
                 setTimeout(async () => {
-                    var query = `ops/labelSpendReport?startDate=${startDate}&endDate=${endDate}&format=json`
+                    var query = `reports/labelSpendReport?startDate=${startDate}&endDate=${endDate}&format=json`
                     if(props.carrierIds) {
                         query += `&carrierIds=${props.carrierIds}`
                     }

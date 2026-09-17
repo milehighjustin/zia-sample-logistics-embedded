@@ -107,9 +107,9 @@ export default function HomeContent() {
   const { data, error, reload } = useBackendData({
     printers: 'print/printers',
     settings: 'settings',
-    summary: `ops/shopifyOrdersByTagByDateByStatus?tag=${encodeURIComponent('Sample Order')}&startDate=${todayParam}&endDate=${todayParam}&format=json&status=any`,
-    expedited: `ops/shopifyOrdersByTagByDateByStatus?tag=${encodeURIComponent('Expedited Sample Delivery')}&startDate=${todayParam}&endDate=${todayParam}&format=json&status=open`,
-    shipping: `ops/labelSpendReport?startDate=${todayParam}&endDate=${todayParam}&format=json`,
+    summary: `reports/shopifyOrdersByTagByDateByStatus?tag=${encodeURIComponent('Sample Order')}&startDate=${todayParam}&endDate=${todayParam}&format=json&status=any`,
+    expedited: `reports/shopifyOrdersByTagByDateByStatus?tag=${encodeURIComponent('Expedited Sample Delivery')}&startDate=${todayParam}&endDate=${todayParam}&format=json&status=open`,
+    shipping: `reports/labelSpendReport?startDate=${todayParam}&endDate=${todayParam}&format=json`,
   });
 
   // The embedded admin User API only returns accountAccess, so name/email are
