@@ -35,12 +35,13 @@ export default function RootLayout({
       <body className={` antialiased`}>
         <ShopifyUserProvider>
         <UiNavMenu>
+          <a href ='/search'>Search</a>
           <a href="/samples/ps/expedited">Expedited Sample Orders</a>
+          <a href="/samples/ps/standard">Standard Sample Orders</a>
           <a href="/samples/ps/trade">Trade Sample Orders</a>
           <a href="/samples/ps/priority">Priority Sample Orders</a>
-          <a href="/samples/ps">All Sample Orders</a>
-          <a href="/samples/labels">Create Labels</a>
           <a href="/samples/reporting">Reporting</a>
+          <a href="/samples/labels">Create Labels</a>
           <a href="/samples/settings">Settings</a>
         </UiNavMenu>
         <div className="px-5">{children}</div>

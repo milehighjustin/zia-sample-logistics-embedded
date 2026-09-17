@@ -4,20 +4,30 @@ import React, { createContext, useContext, useEffect, useState, useCallback } fr
 import { useAppBridge } from "@shopify/app-bridge-react"
 
 export type ShopifyUser = {
-  id?: number
+  /**
+   * Shopify admin user id, taken from the session token's `sub` claim.
+   * The User API does NOT return an id for admin logins, so the token is the
+   * only reliable source.
+   */
+  id: string | null
+  /**
+   * Only populated on Shopify POS. On the (embedded) admin, Shopify's User API
+   * returns accountAccess and nothing else, so name/email stay undefined.
+   */
   name?: string
   email?: string
-  accountAccess?: string
+  /** e.g. "full" | "limited" — all the admin User API gives us */
+  accountAccess?: string | null
 }
 
 type ShopifyUserContextValue = {
-  /** Logged-in Shopify admin user (id, name, email, accountAccess) */
+  /** Logged-in Shopify admin user (id + accountAccess, name/email on POS only) */
   user: ShopifyUser | null
-  /** e.g. "your-store.myshopify.com" */
+  /** e.g. "your-store.myshopify.com", from the session token's `dest` claim */
   shop: string | null
-  /** Fresh session token (JWT) — decoded payload includes sub (user id), dest/shop domain, iss, exp */
+  /** Fresh session token (JWT) — claims include sub (user id), dest (shop), iss, exp */
   getIdToken: () => Promise<string | null>
-  /** Decoded payload of a fresh id token */
+  /** Decoded payload of a fresh session token */
   getIdTokenClaims: () => Promise<Record<string, any> | null>
   loading: boolean
   error: string | null
@@ -49,6 +59,8 @@ function decodeJwtPayload(token: string): Record<string, any> | null {
   }
 }
 
+const stripScheme = (value?: string) => value?.replace(/^https?:\/\//, "").replace(/\/$/, "")
+
 export function ShopifyUserProvider({ children }: { children: React.ReactNode }) {
   const shopify = useAppBridge()
   const [user, setUser] = useState<ShopifyUser | null>(null)
@@ -72,35 +84,40 @@ export function ShopifyUserProvider({ children }: { children: React.ReactNode })
   useEffect(() => {
     let cancelled = false
     async function load() {
+      // The session token is the authoritative identity: `sub` is the admin user
+      // id and `dest` is the shop. This works even though shopify.user() only
+      // returns accountAccess for admin logins.
+      const token = await getIdToken()
+      const claims = token ? decodeJwtPayload(token) : null
+
+      let accountAccess: string | null = null
+      let name: string | undefined
+      let email: string | undefined
       try {
-        // idToken's `dest` claim is the canonical shop domain; fall back to `shop` claim.
-        const token = await shopify.idToken()
-        const claims = token ? decodeJwtPayload(token) : null
-        const shopDomain =
-          (claims?.dest as string | undefined)?.replace(/^https?:\/\//, "") ||
-          (claims?.shop as string | undefined)?.replace(/^https?:\/\//, "") ||
-          null
-        const u = await shopify.user()
-        if (cancelled) return
-        setShop(shopDomain)
-        setUser({
-          id: u?.id,
-          name: u?.name,
-          email: u?.email,
-          accountAccess: u?.accountAccess,
-        })
-        setError(null)
-      } catch (e: any) {
-        if (!cancelled) setError(e?.message || "Could not load Shopify user")
-      } finally {
-        if (!cancelled) setLoading(false)
+        const u: any = await shopify.user()
+        accountAccess = u?.accountAccess ?? null
+        name = u?.name ?? u?.firstName
+        email = u?.email
+      } catch {
+        // User API unavailable in this context — identity still comes from the token.
       }
+
+      if (cancelled) return
+      setUser({
+        id: claims?.sub ? String(claims.sub) : null,
+        name,
+        email,
+        accountAccess,
+      })
+      setShop(stripScheme(claims?.dest || claims?.shop) || null)
+      setError(token ? null : "No Shopify session token available")
+      setLoading(false)
     }
     load()
     return () => {
       cancelled = true
     }
-  }, [shopify])
+  }, [shopify, getIdToken])
 
   return (
     <ShopifyUserContext.Provider value={{ user, shop, getIdToken, getIdTokenClaims, loading, error }}>
@@ -114,24 +131,24 @@ export function useShopifyUser() {
 }
 
 /**
- * Blocks rendering until App Bridge confirms a logged-in Shopify admin user and
- * shop. Use it to wrap page content so nothing loads until identity is known.
+ * Blocks rendering until App Bridge confirms a Shopify admin session (a verified
+ * shop from the session token). Name/email are not required — Shopify's admin
+ * User API doesn't return them.
  */
 export function ShopifyUserGate({ children }: { children: React.ReactNode }) {
-  const { user, shop, loading, error } = useShopifyUser()
+  const { shop, loading } = useShopifyUser()
 
   if (loading) {
-    // Skeleton while App Bridge resolves the session. No shop flash.
     return (
       <div className="h-full w-full flex items-center justify-center">
-        <div className="h-24 w-24 animate-spin rounded-full border-4 border-black text-black border-solid border-current border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite]" role="status">
+        <div className="inline-block h-24 w-24 animate-spin rounded-full border-4 border-black text-black border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" role="status">
           <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"></span>
         </div>
       </div>
     )
   }
 
-  if (error || !user || !shop) {
+  if (!shop) {
     return (
       <div style={{
         padding: '40px',

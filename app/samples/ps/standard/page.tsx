@@ -13,7 +13,7 @@ export default async function Expedited(props: any) {
   return (
     <AppShell>
       <ShopifyUserGate>
-        <OrderQueue tag="Expedited Sample Delivery" />
+        <OrderQueue tag="Standard Sample Delivery" />
       </ShopifyUserGate>
     </AppShell>
   );

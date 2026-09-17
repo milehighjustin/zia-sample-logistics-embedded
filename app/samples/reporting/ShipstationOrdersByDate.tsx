@@ -61,6 +61,7 @@ export default function ShipstationOrdersByDate(props: {carrierIds?: string, ser
                 query += `&serviceProviders=${props.serviceProviders}`
             }
             const response = await authenticatedZiaBackendCall(query, 'GET', undefined)
+            console.log(response?.data)
             setData(response?.data);
             setLoading(false)
         }, 1)
@@ -152,7 +153,10 @@ export default function ShipstationOrdersByDate(props: {carrierIds?: string, ser
           list={[...[{isDivider: true, name: 'Total  Shipments'}], ...[
             { name: 'Shipments', value: data?.summary?.labelCount },
             { name: 'Total Cost', value: `$${data?.summary?.totalCost}` },
-          ], ...[{isDivider: true, name: 'By Service'}], 
+          ], 
+          ...[{isDivider: true, name: 'By User'}], 
+          ...(Object.entries(data?.summary?.byShipper || {}).map(([key, value]: [string, any]) => ({ name: key.split('(')[0], value: `${value.labelCount} / $${value.totalCost}` }))), 
+          ...[{isDivider: true, name: 'By Service'}], 
           ...(Object.entries(data?.summary?.byService || {}).map(([key, value]: [string, any]) => ({ name: key, value: `${value.labelCount} / $${value.totalCost}` }))), 
           ...[{isDivider: true, name: 'By Account'}],
           ...(Object.entries(data?.summary?.byCarrier || {}).map(([key, value]: [string, any]) => ({ name: `${props.carriers?.find(carrier => carrier.carrier_id === key)?.nickname || key} (${props.carriers?.find(carrier => carrier.carrier_id === key)?.account_number || '-'})`, value: `${value.labelCount} / $${value.totalCost}` }))),

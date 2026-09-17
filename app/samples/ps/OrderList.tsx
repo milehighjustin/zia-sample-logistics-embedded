@@ -15,12 +15,13 @@ import ShippingDisplay from "./ShippingDisplay";
 import PrintDisplay from "./PrintDisplay";
 import Button from "@/lib/ui/Button";
 
-export default function OrderList(props: { tag: string, printers: any[], settings: any }) {
+export default function OrderList(props: { tag: string, printers: any[], settings: any, search?: boolean }) {
   const [orders, setOrders] = useState<any[]>([])
   const [displayList, setDisplayList] = useState<any[]>([])
   const [reverse, setReverse] = useState<boolean>(false)
   const [pageInfo, setPageInfo] = useState<{startCursor: string, endCursor: string, hasNextPage: boolean, hasPreviousPage: boolean}>({startCursor: '', endCursor: '', hasNextPage: false, hasPreviousPage: false})
   const [showShippingModal, setShowShippingModal] = useState<boolean>(false)
+  const [showOrderModal, setShowOrderModal] = useState<boolean>(false)
   const [showPrintModal, setShowPrintModal] = useState<boolean>(false)
   const [activeOrders, setActiveOrders] = useState<any[]>([])
   const [loading, setLoading] = useState<boolean>(false)
@@ -183,6 +184,28 @@ export default function OrderList(props: { tag: string, printers: any[], setting
   return (
     <PageStandardList>
     <Modal
+      id="ps-order-modal"
+      open={showOrderModal}
+      onHide={()=>{setShowOrderModal(false); setActiveOrders([])}}
+    >
+      <TitleBar title={'Ship Order'}>
+      </TitleBar>
+          <div className="p-5 relative mb-10">
+            {activeOrders == undefined && <div className="w-full flex flex-row justify-center my-10">
+              <div className="w-full flex flex-col gap-10 items-center justify-center">
+                <div className="text-2xl">Gathering shipping rates from Shipstation</div>
+                <EndlessSpinV2 />
+              </div>  
+            </div>}
+            {activeOrders?.map((orderSelected: any, indexO:number)=>(
+              <div style={{marginBottom: '50px'}} key={indexO}>
+                <ShippingDisplay order={orderSelected} orderShipped={orderShipped} settings={props.settings} />
+              </div>
+            ))}
+          </div>
+    </Modal>
+
+    <Modal
       id="ps-ship-modal"
       open={showShippingModal}
       onHide={()=>{setShowShippingModal(false); setActiveOrders([])}}
@@ -258,12 +281,12 @@ export default function OrderList(props: { tag: string, printers: any[], setting
 
     <TopBarContainer>
       <TopBarV2
-          searchFn={fetchOrdersSearch}
-          liveSearch={true}
+          searchFn={props.search ? fetchOrdersSearch : undefined}
+          liveSearch={props.search ? true : false}
           loading={false}
           nextFn={pageInfo.hasNextPage ? nextFn : undefined}
           prevFn={pageInfo.hasPreviousPage ? prevFn : undefined}
-          switchDirFn={toggleReverse}
+          switchDirFn={props.search ? toggleReverse : undefined}
       />
     </TopBarContainer>
     <ListContainer>

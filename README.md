@@ -34,14 +34,28 @@ Verified claims:
 
 ### Which routes need the header
 
-- **Tokenless** (no `Authorization` header): page-load fetches made by Next
-  server components (`app/**/page.tsx`) — e.g. `print/printers`, `settings`,
-  `sampleOps/*` GETs at render time. Treat these as your public/optional-auth
-  surface; they originate from your own server, not the browser.
-- **Bearer required**: every call from `authenticatedZiaBackendCall` (all client
-  components — order lists, shipping, labels, reporting, settings mutations).
-  ziaback should return 401 for these routes when the header is missing/invalid.
+**All of them.** Every call to ziaback goes through
+`authenticatedZiaBackendCall` and carries `Authorization: Bearer <jwt>` — return
+401 whenever the header is missing or invalid.
+
+Server components can't mint a session token, so no `page.tsx` calls the backend
+at render time. Pages are thin shells (`embeddedGuard` → `ShopifyUserGate` →
+content), and each content component loads its data client-side with
+`useBackendData` (`print/printers`, `settings`, `ops/*`, `sampleOps/*`), which
+only runs after the gate has confirmed the Shopify session. Adding a new
+page-load fetch means adding it to that hook, not to the page.
 
 Note: server-action calls *look* like they come from the Next server (same egress
-IP as page-load fetches), so ziaback can't distinguish them by origin — presence
-of a valid Bearer token is the signal.
+IP as the request that triggered them), so ziaback can't distinguish them by
+origin — presence of a valid Bearer token is the signal.
+
+### Identity on the client
+
+`useShopifyUser()` (from `lib/ShopifyUserProvider`) exposes `user` and `shop` on
+every page. Both come from the **session token claims**, not the User API:
+Shopify's User API returns only `accountAccess` for admin logins (name, email,
+id and accountType are POS-only), so `user.id` is the token's `sub` and `shop` is
+`dest`. `ShopifyUserGate` blocks page content until `shop` is confirmed.
+
+Client-side values are for UI only — authorization decisions belong on ziaback,
+using the verified token claims.

@@ -14,6 +14,10 @@ import ziaBackendCall from "./ziaBackendCall"
  *   aud  — this app's client id
  *
  * Use this for any call the backend should authenticate/authorize.
+ *
+ * This never throws and always resolves to an object: a failed fetch or a dead
+ * server action would otherwise surface as an unhandled rejection inside a
+ * useEffect and take down the whole page.
  */
 export default async function authenticatedZiaBackendCall(
   route: string,
@@ -24,8 +28,14 @@ export default async function authenticatedZiaBackendCall(
   try {
     token = (await window.shopify?.idToken?.()) ?? undefined
   } catch {
-    // No App Bridge available (e.g. dev outside iframe) — send without token and
-    // let the backend decide per-route whether that's allowed.
+    // No App Bridge available (e.g. dev outside the iframe) — send without a
+    // token and let the backend decide per-route whether that's allowed.
   }
-  return ziaBackendCall(route, method, data, token)
+
+  try {
+    return await ziaBackendCall(route, method, data, token)
+  } catch (e) {
+    console.error(`ziaBackendCall failed: ${method} ${route}`, e)
+    return { error: 'Could not communicate with system' }
+  }
 }
