@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ShopifyUserProvider } from "@/lib/ShopifyUserProvider";
 import "./globals.css";
-const shopifyClientId = process.env.shopifyClientId || "missing_client_id";
+const shopifyClientId = process.env.NEXT_PUBLIC_shopifyClientId || "missing_client_id";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
