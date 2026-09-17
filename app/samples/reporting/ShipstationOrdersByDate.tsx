@@ -8,7 +8,7 @@ import ListContainer from "@/lib/ui/ListContainer";
 import MasterList from "@/lib/ui/MasterList";
 import PageStandard from "@/lib/ui/PageStandard";
 import TopBarContainer from "@/lib/ui/TopBarContainer";
-import ziaBackendCall from "@/lib/ziaBackendCall";
+import authenticatedZiaBackendCall from "@/lib/authenticatedZiaBackendCall";
 import { useEffect, useRef, useState } from "react";
 
 export default function ShipstationOrdersByDate(props: {carrierIds?: string, serviceCodes?: string, serviceProviders?: string, carriers?: any[] }) {
@@ -37,7 +37,7 @@ export default function ShipstationOrdersByDate(props: {carrierIds?: string, ser
             if(props.serviceProviders) {
                 query += `&serviceProviders=${props.serviceProviders}`
             }
-            const response = await ziaBackendCall(query, 'GET', undefined)
+            const response = await authenticatedZiaBackendCall(query, 'GET', undefined)
             setData(response?.data);
             setLoading(false)
         }, 1)
@@ -60,7 +60,7 @@ export default function ShipstationOrdersByDate(props: {carrierIds?: string, ser
             if(props.serviceProviders) {
                 query += `&serviceProviders=${props.serviceProviders}`
             }
-            const response = await ziaBackendCall(query, 'GET', undefined)
+            const response = await authenticatedZiaBackendCall(query, 'GET', undefined)
             setData(response?.data);
             setLoading(false)
         }, 1)
@@ -83,7 +83,7 @@ export default function ShipstationOrdersByDate(props: {carrierIds?: string, ser
             if(props.serviceProviders) {
                 query += `&serviceProviders=${props.serviceProviders}`
             }
-            const response = await ziaBackendCall(query, 'GET', undefined)
+            const response = await authenticatedZiaBackendCall(query, 'GET', undefined)
             setData(response?.data);
             setLoading(false)
         }, 1)
@@ -105,7 +105,7 @@ export default function ShipstationOrdersByDate(props: {carrierIds?: string, ser
                     if(props.serviceProviders) {
                         query += `&serviceProviders=${props.serviceProviders}`
                     }
-                    const response = await ziaBackendCall(query, 'GET', undefined)
+                    const response = await authenticatedZiaBackendCall(query, 'GET', undefined)
                     setData(response?.data);
                     setLoading(false)
                 }, 1)

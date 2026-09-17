@@ -8,7 +8,7 @@ import Button from "@/lib/ui/Button";
 import InputText from "@/lib/ui/InputText";
 import InputCombobox from "@/lib/ui/InputCombobox";
 import boxes from "../boxes";
-import ziaBackendCall from "@/lib/ziaBackendCall";
+import authenticatedZiaBackendCall from "@/lib/authenticatedZiaBackendCall";
 import { GiUsaFlag } from "react-icons/gi";
 import EndlessSpinV2 from "@/lib/ui/EndlessSpinV2";
 
@@ -87,14 +87,14 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
 
 
     const getPrinters = async () => {
-      const resp = await ziaBackendCall('print/printers', 'GET');
+      const resp = await authenticatedZiaBackendCall('print/printers', 'GET');
       if(resp?.data){
         setPrinters(resp.data);
       }
     }
 
     const getSettings = async () => {
-      const resp = await ziaBackendCall('settings', 'GET');
+      const resp = await authenticatedZiaBackendCall('settings', 'GET');
       if(resp?.data){
         setSettings(resp.data);
       }
@@ -309,7 +309,7 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
       } */
 
       setTimeout(async ()=>{
-        const resp = await ziaBackendCall('sampleOps/shippingRates', 'POST', ratesPayload);
+        const resp = await authenticatedZiaBackendCall('sampleOps/shippingRates', 'POST', ratesPayload);
         if(resp?.data){
           const ratesFound = (resp.data.rate_response?.rates || []).map((rate: any) => {
             rate.shipmentTotal  = 
@@ -402,7 +402,7 @@ export default function ShippingDisplay(props: { order: any, orderShipped: () =>
         shipPayload.customsItems = customsItems;
       }
 
-      const resp = await ziaBackendCall(`sampleOps/ship?printerId=${printerId}`, 'POST', shipPayload);
+      const resp = await authenticatedZiaBackendCall(`sampleOps/ship?printerId=${printerId}`, 'POST', shipPayload);
       if(resp?.data?.label_id){
         shopify.toast.show("Order shipped successfully", { duration: 3000 });
         setActiveOrder(resp.data.order);

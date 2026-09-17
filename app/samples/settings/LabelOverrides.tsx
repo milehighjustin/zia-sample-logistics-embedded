@@ -1,7 +1,7 @@
 "use client"
 import { useAppBridge, Modal, TitleBar } from "@shopify/app-bridge-react"
 import {  useRef, useState } from "react"
-import ziaBackendCall from "@/lib/ziaBackendCall"
+import authenticatedZiaBackendCall from "@/lib/authenticatedZiaBackendCall"
 import Button from "@/lib/ui/Button"
 import MasterList from "@/lib/ui/MasterList"
 import ListContainer from "@/lib/ui/ListContainer"
@@ -111,7 +111,7 @@ export default function LabelOverrides(props: any){
           labels: pendingLabels,
           sku: initialRef.current?.value,
         }
-        const call = await ziaBackendCall('sampleOps/labelCount', 'POST', labelRule)
+        const call = await authenticatedZiaBackendCall('sampleOps/labelCount', 'POST', labelRule)
         if(call.data?._id){
           const cln = structuredClone(rules)
           const newCln = cln.unshift(call.data)
@@ -148,7 +148,7 @@ export default function LabelOverrides(props: any){
     const deleteLabel = (rule:any) => {
         setLoading(true)
         setTimeout(async ()=>{
-          const result = await ziaBackendCall(`sampleOps/labelCount/${rule['_id']}`, 'DELETE', {})
+          const result = await authenticatedZiaBackendCall(`sampleOps/labelCount/${rule['_id']}`, 'DELETE', {})
           if(result.error){
             shopify.toast.show(result.error, { duration: 3000 })
           }

@@ -3,7 +3,7 @@ import InputCombobox from "@/lib/ui/InputCombobox"
 import MasterList from "@/lib/ui/MasterList"
 import PageStandard from "@/lib/ui/PageStandard"
 import SectionBlock from "@/lib/ui/SectionBlock"
-import ziaBackendCall from "@/lib/ziaBackendCall"
+import authenticatedZiaBackendCall from "@/lib/authenticatedZiaBackendCall"
 import {  useState } from "react"
 
 
@@ -14,7 +14,7 @@ export default function Printers(props: any){
     const printerSelected = async (code: string, printerId: any) => {
       setLoading(true)
       setTimeout(async ()=>{
-        const result = await ziaBackendCall('settings', 'PUT', {code: code, value: printerId})
+        const result = await authenticatedZiaBackendCall('settings', 'PUT', {code: code, value: printerId})
         shopify.toast.show(result.error ? result.error : 'Default printer set', { duration: 3000 })
         setLoading(false)
       },1)

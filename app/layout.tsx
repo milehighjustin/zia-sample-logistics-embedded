@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { ShopifyUserProvider } from "@/lib/ShopifyUserProvider";
 import "./globals.css";
 const shopifyClientId = process.env.shopifyClientId || "missing_client_id";
 const geistSans = Geist({
@@ -32,6 +33,7 @@ export default function RootLayout({
       </head>
 
       <body className={` antialiased`}>
+        <ShopifyUserProvider>
         <UiNavMenu>
           <a href="/samples/ps/expedited">Expedited Sample Orders</a>
           <a href="/samples/ps/trade">Trade Sample Orders</a>
@@ -42,6 +44,7 @@ export default function RootLayout({
           <a href="/samples/settings">Settings</a>
         </UiNavMenu>
         <div className="px-5">{children}</div>
+        </ShopifyUserProvider>
       </body>
 
     </html>

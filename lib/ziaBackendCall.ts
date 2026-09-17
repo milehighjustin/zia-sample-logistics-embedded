@@ -1,6 +1,16 @@
 "use server"
 
-export default async function ziaBackendCall(route: string, method: string, data?: any) { 
+/**
+ * Calls the zia backend. When `token` is provided (a Shopify App Bridge session
+ * token obtained client-side via `authenticatedZiaBackendCall`), it is forwarded
+ * to the backend as `Authorization: Bearer <token>` so the backend can verify
+ * the shop and user making the request.
+ *
+ * Page-load fetches (server components) pass no token; those routes are the
+ * backend's public/optional-auth surface. Client-initiated mutations and reads
+ * should always pass a token.
+ */
+export default async function ziaBackendCall(route: string, method: string, data?: any, token?: string) { 
 
     const request: { method: string; headers: { [key: string]: string }; body?: string; signal?: AbortSignal; cache?: RequestCache } = {
     method: method.toUpperCase(),
@@ -9,6 +19,10 @@ export default async function ziaBackendCall(route: string, method: string, data
     },
     cache: 'no-store'
     }
+
+  if (token) {
+    request.headers['Authorization'] = `Bearer ${token}`
+  }
 
   if(method.toUpperCase() != 'GET'){
     request.body = JSON.stringify(data)

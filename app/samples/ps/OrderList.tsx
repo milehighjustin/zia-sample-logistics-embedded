@@ -6,7 +6,7 @@ import MasterList from "@/lib/ui/MasterList";
 import PageStandardList from "@/lib/ui/PageStandardList";
 import { useEffect, useRef, useState } from "react";
 import { BsFillBoxFill, BsFillTagFill } from "react-icons/bs";
-import ziaBackendCall from "@/lib/ziaBackendCall";
+import authenticatedZiaBackendCall from "@/lib/authenticatedZiaBackendCall";
 import TopBarContainer from "@/lib/ui/TopBarContainer";
 import TopBarV2 from "@/lib/ui/TopBarV2";
 import { Modal, TitleBar } from "@shopify/app-bridge-react";
@@ -37,7 +37,7 @@ export default function OrderList(props: { tag: string, printers: any[], setting
     const cursor = direction == 'forward' ? pageInfo.endCursor : (direction == 'backward' ? pageInfo.startCursor : '')
     const dir = direction == 'forward' ? 'after' : (direction == 'backward' ? 'before' : '')
     const url = `sampleOps/orders?tag=${encodeURIComponent(props.tag)}&reverse=${reverse}&cursor=${cursor}&dir=${dir}`
-    const orders = await ziaBackendCall(url, 'GET', undefined)
+    const orders = await authenticatedZiaBackendCall(url, 'GET', undefined)
     console.log(orders)
     const fmt = (structuredClone(orders.data?.orders || [])).map((order:any)=>{
             order.statuses = <div className="flex flex-row gap-2 flex-wrap">
@@ -77,7 +77,7 @@ export default function OrderList(props: { tag: string, printers: any[], setting
       return
     }
     const url = `sampleOps/orders?searchTerm=${encodeURIComponent(term)}&reverse=${reverse}`
-    const orders = await ziaBackendCall(url, 'GET', undefined)
+    const orders = await authenticatedZiaBackendCall(url, 'GET', undefined)
     const fmt = (structuredClone(orders.data?.orders || [])).map((order:any)=>{
             order.statuses = <div className="flex flex-row gap-2 flex-wrap">
               {order.tags.includes('TRADE-SAMPLE-ORDER') && <BadgeV2 color="yellow">Trade</BadgeV2>}
@@ -162,7 +162,7 @@ export default function OrderList(props: { tag: string, printers: any[], setting
     }
     const orderLabels = activeOrders.map((order) => order.labels)
     shopify.toast.show("Label printing triggered for selected orders", { duration: 3000 });
-    ziaBackendCall('sampleOps/printLabels?printerId='+labelPrinterRef.current?.value, 'POST', orderLabels)
+    authenticatedZiaBackendCall('sampleOps/printLabels?printerId='+labelPrinterRef.current?.value, 'POST', orderLabels)
   }
 
   const printPackingSlips = () => {
@@ -171,7 +171,7 @@ export default function OrderList(props: { tag: string, printers: any[], setting
       return;
     }
     shopify.toast.show("Packing slip printing triggered for selected orders", { duration: 3000 });
-    ziaBackendCall('sampleOps/printPacking?printerId='+letterPrinterRef.current?.value, 'POST', activeOrders)
+    authenticatedZiaBackendCall('sampleOps/printPacking?printerId='+letterPrinterRef.current?.value, 'POST', activeOrders)
   }
 
   const orderShipped = () => {

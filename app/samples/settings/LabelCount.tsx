@@ -4,7 +4,7 @@ import { Modal, TitleBar } from "@shopify/app-bridge-react"
 import { FaTrash } from "react-icons/fa6"
 import { PlusIcon } from "@heroicons/react/20/solid"
 import InputCombobox from "@/lib/ui/InputCombobox"
-import ziaBackendCall from "@/lib/ziaBackendCall"
+import authenticatedZiaBackendCall from "@/lib/authenticatedZiaBackendCall"
 import Button from "@/lib/ui/Button"
 import InputText from "@/lib/ui/InputText"
 import MasterList from "@/lib/ui/MasterList"
@@ -64,7 +64,7 @@ export default function LabelCount(props: {rules: any[], products: any[]}){
           labels: pendingLabels,
           sku: activeSku.sku,
         }
-        const call = await ziaBackendCall('sampleOps/labelCount', 'POST', labelRule)
+        const call = await authenticatedZiaBackendCall('sampleOps/labelCount', 'POST', labelRule)
         if(call['_id']){
           const cln = structuredClone(rules)
           const newCln = cln.unshift(call)
@@ -104,7 +104,7 @@ export default function LabelCount(props: {rules: any[], products: any[]}){
     const deleteRule = (action:any, rule: any) => {
       setLoading(true)
       setTimeout(async ()=>{
-        const result = await ziaBackendCall(`sampleOps/labelCount/${rule['_id']}`, 'DELETE', {})
+        const result = await authenticatedZiaBackendCall(`sampleOps/labelCount/${rule['_id']}`, 'DELETE', {})
         if(result.error){
           shopify.toast.show(result.error, { duration: 3000 })
         }

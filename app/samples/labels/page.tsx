@@ -1,4 +1,5 @@
 import AppShell from "@/lib/ui/AppShell"
+import { ShopifyUserGate } from "@/lib/ShopifyUserProvider"
 import ManualLabelsContent from "./ManualLabelsContent"
 import { headers } from "next/headers";
 import ziaBackendCall from "@/lib/ziaBackendCall";
@@ -47,7 +48,9 @@ export default async function ManualLabels(props: any) {
 
   return (
     <AppShell>
+      <ShopifyUserGate>
       <ManualLabelsContent products={productList.data ? productList.data : []} printers={printerList.data ? printerList.data : []} settings={settingsList.data ? settingsList.data : []} />
+      </ShopifyUserGate>
     </AppShell>
   );
 }

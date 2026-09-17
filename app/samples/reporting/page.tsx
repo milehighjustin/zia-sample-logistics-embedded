@@ -1,4 +1,5 @@
 import AppShell from "@/lib/ui/AppShell"
+import { ShopifyUserGate } from "@/lib/ShopifyUserProvider"
 import ziaBackendCall from "@/lib/ziaBackendCall";
 import { headers } from "next/headers";
 import ReportingContent from "./ReportingContent";
@@ -46,7 +47,9 @@ export default async function Home(props: any) {
   const carriers = (await ziaBackendCall('sampleOps/carriers', 'GET', undefined))?.data?.carriers || []
   return (
     <AppShell>
+      <ShopifyUserGate>
       <ReportingContent carriers={carriers} />
+      </ShopifyUserGate>
     </AppShell>
   );
 }

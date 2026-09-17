@@ -1,6 +1,6 @@
 "use client"
 import {  useEffect, useRef, useState } from "react"
-import ziaBackendCall from "@/lib/ziaBackendCall"
+import authenticatedZiaBackendCall from "@/lib/authenticatedZiaBackendCall"
 import MasterList from "@/lib/ui/MasterList"
 import ListContainer from "@/lib/ui/ListContainer"
 import TopBarContainer from "@/lib/ui/TopBarContainer"
@@ -30,7 +30,7 @@ export default function Products(props: any){
     const launchRefresh = () => {
       setLoading(true)
       setTimeout(async ()=>{
-        const result = await ziaBackendCall(`sampleOps/syncProducts`, 'GET', {})
+        const result = await authenticatedZiaBackendCall(`sampleOps/syncProducts`, 'GET', {})
         if(result.error){
           shopify.toast.show(result.error)
         }
@@ -45,7 +45,7 @@ export default function Products(props: any){
     const getProducts = async () => {
       setLoading(true)
       setTimeout(async ()=>{
-        const result = await ziaBackendCall(`sampleOps/productList`, 'GET', {})
+        const result = await authenticatedZiaBackendCall(`sampleOps/productList`, 'GET', {})
         if(result.error){
           shopify.toast.show(result.error)
         }

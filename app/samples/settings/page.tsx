@@ -1,4 +1,5 @@
 import AppShell from "@/lib/ui/AppShell"
+import { ShopifyUserGate } from "@/lib/ShopifyUserProvider"
 import ziaBackendCall from "@/lib/ziaBackendCall";
 import SettingsContent from "./SettingsContent";
 import { headers } from "next/headers";
@@ -51,7 +52,9 @@ export default async function Home(props: any) {
   const settings = await ziaBackendCall('settings', 'GET', undefined)
   return (
     <AppShell>
+      <ShopifyUserGate>
       <SettingsContent printers={printers.data} settings={settings.data} boxPackingRules={boxPackingRules.data} labelCountRules={labelCountRules.data} overrides={overrides.data} products={products.data}></SettingsContent>
+      </ShopifyUserGate>
     </AppShell>
   );
 }

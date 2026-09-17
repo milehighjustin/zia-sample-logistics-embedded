@@ -1,7 +1,7 @@
 "use client"
 import { useAppBridge, Modal, TitleBar } from "@shopify/app-bridge-react"
 import {  useRef, useState } from "react"
-import ziaBackendCall from "@/lib/ziaBackendCall"
+import authenticatedZiaBackendCall from "@/lib/authenticatedZiaBackendCall"
 import Button from "@/lib/ui/Button"
 import MasterList from "@/lib/ui/MasterList"
 import ListContainer from "@/lib/ui/ListContainer"
@@ -38,7 +38,7 @@ export default function ProductOverrides(props: any){
     const deleteRule = (action:any, rule: any) => {
       setLoading(true)
       setTimeout(async ()=>{
-        const result = await ziaBackendCall(`sampleOps/overrides/${rule['_id']}`, 'DELETE', {})
+        const result = await authenticatedZiaBackendCall(`sampleOps/overrides/${rule['_id']}`, 'DELETE', {})
         if(result.error){
           shopify.toast.show(result.error)
         }
@@ -65,7 +65,7 @@ export default function ProductOverrides(props: any){
           ruleSku: ruleSku,
           replaceSku: replaceSku,
         }
-        const call = await ziaBackendCall('sampleOps/overrides', 'POST', rule)
+        const call = await authenticatedZiaBackendCall('sampleOps/overrides', 'POST', rule)
         if(call.data?._id){
           const cln = structuredClone(rules)
           const newCln = cln.unshift(call.data)

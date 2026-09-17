@@ -5,7 +5,7 @@ import InputText from "@/lib/ui/InputText"
 import MasterList from "@/lib/ui/MasterList"
 import PageStandard from "@/lib/ui/PageStandard"
 import SectionBlock from "@/lib/ui/SectionBlock"
-import ziaBackendCall from "@/lib/ziaBackendCall"
+import authenticatedZiaBackendCall from "@/lib/authenticatedZiaBackendCall"
 import {  useEffect, useRef, useState } from "react"
 
 
@@ -22,7 +22,7 @@ export default function Shipstation(props: any){
     }, [])
 
     const getCarriers = async () => {
-      const result = await ziaBackendCall('sampleOps/carriers', 'GET', {})
+      const result = await authenticatedZiaBackendCall('sampleOps/carriers', 'GET', {})
       if(result.data.carriers){
         setCarriers(result.data.carriers)
       }
@@ -33,9 +33,9 @@ export default function Shipstation(props: any){
     const keyUpdate = async () => {
       setLoading(true)
       setTimeout(async ()=>{
-        const result = await ziaBackendCall('settings', 'PUT', {code: 'shipstationAPIKey', value: inputRef.current?.value})
+        const result = await authenticatedZiaBackendCall('settings', 'PUT', {code: 'shipstationAPIKey', value: inputRef.current?.value})
         shopify.toast.show(result.error ? result.error : 'API key updated', { duration: 3000 })
-        const refresh = await ziaBackendCall('settings/refreshCache', 'POST', {})
+        const refresh = await authenticatedZiaBackendCall('settings/refreshCache', 'POST', {})
         getCarriers()
         setLoading(false)
       },1)
@@ -45,8 +45,8 @@ export default function Shipstation(props: any){
       setLoading(true)
       setTimeout(async ()=>{
         const updateObj = {code: 'expeditedShippingCarrierId', value: item}
-        const result = await ziaBackendCall('settings', 'PUT', updateObj)
-        const refresh = await ziaBackendCall('settings/refreshCache', 'POST', {})
+        const result = await authenticatedZiaBackendCall('settings', 'PUT', updateObj)
+        const refresh = await authenticatedZiaBackendCall('settings/refreshCache', 'POST', {})
         shopify.toast.show(result.error ? result.error : 'Carrier ID updated', { duration: 3000 })
         setLoading(false)
       },1)

@@ -8,7 +8,7 @@ import ListContainer from "@/lib/ui/ListContainer";
 import MasterList from "@/lib/ui/MasterList";
 import PageStandard from "@/lib/ui/PageStandard";
 import TopBarContainer from "@/lib/ui/TopBarContainer";
-import ziaBackendCall from "@/lib/ziaBackendCall";
+import authenticatedZiaBackendCall from "@/lib/authenticatedZiaBackendCall";
 import { useRef, useState } from "react";
 
 export default function ShopifyOrdersByDate(props: {tag: string}) {
@@ -26,7 +26,7 @@ export default function ShopifyOrdersByDate(props: {tag: string}) {
           const day = String(t.getDate()).padStart(2, '0');
 
           const today = `${year}-${month}-${day}`
-            const response = await ziaBackendCall(`ops/shopifyOrdersByTagByDateByStatus?tag=${props.tag}&startDate=${today}&endDate=${today}&format=json&status=any`, 'GET', undefined)
+            const response = await authenticatedZiaBackendCall(`ops/shopifyOrdersByTagByDateByStatus?tag=${props.tag}&startDate=${today}&endDate=${today}&format=json&status=any`, 'GET', undefined)
             setData(response?.data);
             setLoading(false)
         }, 1)
@@ -39,7 +39,7 @@ export default function ShopifyOrdersByDate(props: {tag: string}) {
             const startOfWeek = new Date();
             startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
             const startDate = startOfWeek.toISOString().split('T')[0];
-            const response = await ziaBackendCall(`ops/shopifyOrdersByTagByDateByStatus?tag=${props.tag}&startDate=${startDate}&endDate=${today}&format=json&status=any`, 'GET', undefined)
+            const response = await authenticatedZiaBackendCall(`ops/shopifyOrdersByTagByDateByStatus?tag=${props.tag}&startDate=${startDate}&endDate=${today}&format=json&status=any`, 'GET', undefined)
             setData(response?.data);
             setLoading(false)
         }, 1)
@@ -52,7 +52,7 @@ export default function ShopifyOrdersByDate(props: {tag: string}) {
             const startOf30Days = new Date();
             startOf30Days.setDate(startOf30Days.getDate() - 30);
             const startDate = startOf30Days.toISOString().split('T')[0];
-            const response = await ziaBackendCall(`ops/shopifyOrdersByTagByDateByStatus?tag=${props.tag}&startDate=${startDate}&endDate=${today}&format=json&status=any`, 'GET', undefined)
+            const response = await authenticatedZiaBackendCall(`ops/shopifyOrdersByTagByDateByStatus?tag=${props.tag}&startDate=${startDate}&endDate=${today}&format=json&status=any`, 'GET', undefined)
             setData(response?.data);
             setLoading(false)
         }, 1)
@@ -64,7 +64,7 @@ export default function ShopifyOrdersByDate(props: {tag: string}) {
             if (startDate && endDate) {
                 setLoading(true)
                 setTimeout(async () => {
-                    const response = await ziaBackendCall(`ops/shopifyOrdersByTagByDateByStatus?tag=${props.tag}&startDate=${startDate}&endDate=${endDate}&format=json&status=any`, 'GET', undefined)
+                    const response = await authenticatedZiaBackendCall(`ops/shopifyOrdersByTagByDateByStatus?tag=${props.tag}&startDate=${startDate}&endDate=${endDate}&format=json&status=any`, 'GET', undefined)
                     setData(response?.data);
                     setLoading(false)
                 }, 1)

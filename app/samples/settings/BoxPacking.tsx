@@ -1,7 +1,7 @@
 "use client"
 import { useAppBridge, Modal, TitleBar } from "@shopify/app-bridge-react"
 import {  useRef, useState } from "react"
-import ziaBackendCall from "@/lib/ziaBackendCall"
+import authenticatedZiaBackendCall from "@/lib/authenticatedZiaBackendCall"
 import Button from "@/lib/ui/Button"
 import MasterList from "@/lib/ui/MasterList"
 import ListContainer from "@/lib/ui/ListContainer"
@@ -61,7 +61,7 @@ export default function BoxPacking(props: any){
       }
       setLoading(true)
       setTimeout(async ()=>{
-          const result = await ziaBackendCall('sampleOps/boxPacking', 'POST', ruleObj)
+          const result = await authenticatedZiaBackendCall('sampleOps/boxPacking', 'POST', ruleObj)
           setLoading(false)
           if(result.data && result.data['_id']){
             const cln = structuredClone(rules)
@@ -112,7 +112,7 @@ export default function BoxPacking(props: any){
     const deleteRule = (action:any, rule: any) => {
       setLoading(true)
       setTimeout(async ()=>{
-        const result = await ziaBackendCall(`sampleOps/boxPacking/${rule['_id']}`, 'DELETE', {})
+        const result = await authenticatedZiaBackendCall(`sampleOps/boxPacking/${rule['_id']}`, 'DELETE', {})
         if(result.error){
           shopify.toast.show(result.error ? result.error : 'Error deleting rule', { duration: 3000 })
         }

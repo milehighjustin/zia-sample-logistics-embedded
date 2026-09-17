@@ -6,7 +6,7 @@ import Checkbox from "@/lib/ui/Checkbox";
 import InputCombobox from "@/lib/ui/InputCombobox";
 import InputText from "@/lib/ui/InputText";
 import PageStandard from "@/lib/ui/PageStandard";
-import ziaBackendCall from "@/lib/ziaBackendCall";
+import authenticatedZiaBackendCall from "@/lib/authenticatedZiaBackendCall";
 import { Modal, TitleBar } from "@shopify/app-bridge-react";
 import { useRef, useState } from "react";
 import { FaTrash } from "react-icons/fa";
@@ -86,7 +86,7 @@ export default function ManualLabelsContent(props: {products: any[], printers: a
     const printExecute = async () => {
       if(pendingLabels.length > 0){
       shopify.toast.show("Labels Printed", { duration: 3000 });
-      ziaBackendCall('sampleOps/printLabels?printerId='+labelPrinterRef.current?.value, 'POST', [pendingLabels])
+      authenticatedZiaBackendCall('sampleOps/printLabels?printerId='+labelPrinterRef.current?.value, 'POST', [pendingLabels])
       }
     }
 
