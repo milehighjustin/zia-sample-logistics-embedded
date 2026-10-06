@@ -38,6 +38,7 @@ export default function RootLayout({
           <a href ='/search'>Search</a>
           <a href="/samples/ps/expedited">Expedited Sample Orders</a>
           <a href="/samples/ps/standard">Standard Sample Orders</a>
+          <a href="/samples/ps/international">International Sample Orders</a>
           <a href="/samples/ps/trade">Trade Sample Orders</a>
           <a href="/samples/ps/priority">Priority Sample Orders</a>
           <a href="/samples/reporting">Reporting</a>

@@ -53,6 +53,7 @@ export default function OrderList(props: { tag: string, printers: any[], setting
               {order.tags.includes('UPS 2nd Day Air') && <BadgeV2 color="blue">UPS 2nd Day Air</BadgeV2>}
               {order.tags.includes('UPS Next Day Air') && <BadgeV2 color="blue">UPS Next Day Air</BadgeV2>}
               {order.tags.includes('Standard Sample Shipping') && <BadgeV2 color="blue">Standard</BadgeV2>}
+              {order.tags.includes('International Sample Delivery') && <BadgeV2 color="red">International</BadgeV2>}
             </div>
             order.boxDisplay = <div className="flex flex-row gap-1 items-center justify-center">
               {order.boxes.map((box: any, index: number)=>(
