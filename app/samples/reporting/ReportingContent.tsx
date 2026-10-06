@@ -3,6 +3,7 @@
 import PageStandardSideNav from "@/lib/ui/PageStandardSideNav";
 import { useRef, useState } from "react";
 import ShopifyOrdersByDate from "./ShopifyOrdersByDate";
+import ShopifyItemsByDate from "./ShopifyItemsByDate";
 import ShipstationOrdersByDate from "./ShipstationOrdersByDate";
 import OrderShippingReport from "./OrderShippingReport";
 import CompedShippingReport from "./CompedShippingReport";
@@ -14,6 +15,7 @@ export default function ReportingContent(props: { carriers: any[] }) {
         { id: 'shopifyOrdersByDate', name: 'All Orders By Date' },
         { id: 'expeditedOrdersByDate', name: 'Expedited Delivery Orders By Date' },
         { id: 'standardOrdersByDate', name: 'Standard Delivery Orders By Date' },
+        { id: 'shopifyItemsByDate', name: 'All Items Sold By Date' },
         { id: 'shipstationShipmentsByDate', name: 'All Shipments By Date' },
         { id: 'expeditedShipmentsByDate', name: 'Expedited Delivery Shipments By Date' },
         { id: 'standardShipmentsByDate', name: 'Standard Delivery Shipments By Date' },
@@ -22,7 +24,6 @@ export default function ReportingContent(props: { carriers: any[] }) {
         { id: 'expeditedOrderShippingReport', name: 'Expedited Order Shipping Report' },
         { id: 'standardOrderShippingReport', name: 'Standard Order Shipping Report' },
         { id: 'compedShipmentsByDate', name: 'Comped Shipments Report' },
-        { id: 'shipmentsByUser', name: 'Shipments By User' }
     ])
 
 
@@ -38,6 +39,7 @@ export default function ReportingContent(props: { carriers: any[] }) {
       {nav.find((item:any) => item.current)?.id === 'shopifyOrdersByDate' && <ShopifyOrdersByDate tag="Sample%20Order" />}
       {nav.find((item:any) => item.current)?.id === 'expeditedOrdersByDate' && <ShopifyOrdersByDate tag="Expedited%20Sample%20Delivery" />}
       {nav.find((item:any) => item.current)?.id === 'standardOrdersByDate' && <ShopifyOrdersByDate tag="Standard%20Sample%20Delivery" />}
+      {nav.find((item:any) => item.current)?.id === 'shopifyItemsByDate' && <ShopifyItemsByDate tag="Sample%20Order" />}
       {nav.find((item:any) => item.current)?.id === 'shipstationShipmentsByDate' && <ShipstationOrdersByDate carriers={props.carriers} />}
       {nav.find((item:any) => item.current)?.id === 'expeditedShipmentsByDate' && <ShipstationOrdersByDate carriers={props.carriers} serviceCodes="ups_2nd_day_air,ups_next_day_air" />}
       {nav.find((item:any) => item.current)?.id === 'standardShipmentsByDate' && <ShipstationOrdersByDate carriers={props.carriers} serviceCodes="ups_ground,fedex_home_delivery" />}

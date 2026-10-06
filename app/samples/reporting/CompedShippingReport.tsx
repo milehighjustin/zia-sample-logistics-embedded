@@ -59,8 +59,9 @@ export default function CompedShippingReport(props: {tag: string}) {
     }
 
     const getRange = () => {
-            const startDate = startDateRef.current?.value;
-            const endDate = endDateRef.current?.value;
+            const today = new Date().toISOString().split('T')[0];
+            const startDate = startDateRef.current?.value || today;
+            const endDate = endDateRef.current?.value || startDate;
             if (startDate && endDate) {
                 setLoading(true)
                 setTimeout(async () => {

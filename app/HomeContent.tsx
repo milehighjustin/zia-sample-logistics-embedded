@@ -17,7 +17,8 @@ import BadgeV2 from "@/lib/ui/BadgeV2";
 import PageStandard from "@/lib/ui/PageStandard";
 import { useShopifyUser } from "@/lib/ShopifyUserProvider";
 import useBackendData from "@/lib/useBackendData";
-import { countExpeditedToShip } from "@/lib/pacificTime";
+import { addYearsToDayKey, countExpeditedToShip, pacificToday } from "@/lib/pacificTime";
+import { useSearchParams } from "next/navigation";
 
 const fmtNum = (n: any) =>
   n === null || n === undefined ? "—" : Number(n).toLocaleString("en-US");
@@ -29,53 +30,53 @@ const fmtMoney = (n: any) =>
 
 const QUICK_LINKS = [
   {
-    title: "Process Samples",
-    desc: "Fulfill today's sample orders",
-    href: "/samples/ps",
-    icon: Squares2X2Icon,
-    iconWrap: "bg-sky-100 text-sky-700",
+    title: "Search Orders",
+    desc: "Barcode and manual search",
+    href: "/search",
+    icon: MagnifyingGlassIcon,
+    iconWrap: "bg-blue-100 text-blue-700",
   },
   {
     title: "Expedited Queue",
-    desc: "2-day & overnight deliveries",
+    desc: "2-Day/Next Day Orders",
     href: "/samples/ps/expedited",
     icon: BoltIcon,
     iconWrap: "bg-orange-100 text-orange-700",
   },
   {
+    title: "All Sample Orders",
+    desc: "All Samples",
+    href: "/samples/ps",
+    icon: Squares2X2Icon,
+    iconWrap: "bg-sky-100 text-sky-700",
+  },
+  {
     title: "Priority Queue",
-    desc: "Priority sample orders",
+    desc: "Priority Orders",
     href: "/samples/ps/priority",
     icon: ExclamationTriangleIcon,
     iconWrap: "bg-red-100 text-red-700",
   },
   {
     title: "Trade Samples",
-    desc: "Trade & partner samples",
+    desc: "Trade Orders",
     href: "/samples/ps/trade",
     icon: GiftIcon,
     iconWrap: "bg-yellow-100 text-yellow-700",
   },
   {
     title: "Create Labels",
-    desc: "Batch print shipping labels",
+    desc: "Manually print tile labels",
     href: "/samples/labels",
     icon: TagIcon,
     iconWrap: "bg-purple-100 text-purple-700",
   },
   {
     title: "Reporting",
-    desc: "Orders, shipments & sales",
+    desc: "Sample Operation Reporting",
     href: "/samples/reporting",
     icon: ChartBarIcon,
     iconWrap: "bg-green-100 text-green-700",
-  },
-  {
-    title: "Search Orders",
-    desc: "Find any order by name",
-    href: "/search",
-    icon: MagnifyingGlassIcon,
-    iconWrap: "bg-blue-100 text-blue-700",
   },
   {
     title: "Settings",
@@ -97,18 +98,20 @@ function greeting(): string {
 
 export default function HomeContent() {
   const { user, shop } = useShopifyUser();
-
-  // Today's date for the summary query (local time, like the reporting page).
+  const query = useSearchParams();
+  const entireQuery = query.toString();
+  // The report params are Pacific calendar days (the backend bounds each day in
+  // Pacific time), so use the shop's day rather than the browser's local one.
   const now = new Date();
-  const todayParam = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-
+  const todayParam = pacificToday(now);
+  const oneYearAgoParam = addYearsToDayKey(todayParam, -1);
   // Render-time data is fetched client-side so every call carries the Shopify
   // session token; server components can't mint one.
   const { data, error, reload } = useBackendData({
     printers: 'print/printers',
     settings: 'settings',
     summary: `reports/shopifyOrdersByTagByDateByStatus?tag=${encodeURIComponent('Sample Order')}&startDate=${todayParam}&endDate=${todayParam}&format=json&status=any`,
-    expedited: `reports/shopifyOrdersByTagByDateByStatus?tag=${encodeURIComponent('Expedited Sample Delivery')}&startDate=${todayParam}&endDate=${todayParam}&format=json&status=open`,
+    expedited: `reports/shopifyOrdersByTagByDateByStatus?tag=${encodeURIComponent('Expedited Sample Delivery')}&startDate=${oneYearAgoParam}&endDate=${todayParam}&format=json&status=open`,
     shipping: `reports/labelSpendReport?startDate=${todayParam}&endDate=${todayParam}&format=json`,
   });
 
@@ -141,10 +144,10 @@ export default function HomeContent() {
   const summary = data?.summary?.summary ?? null;
   const shipSummary = data?.shipping?.summary ?? null;
 
-  // Expedited orders that still need shipping and came in before the 11:00am
-  // Pacific cutoff (see lib/pacificTime). The report is already scoped to today
-  // with status=open, so this only checks the hour and drops fulfilled orders.
-  const expeditedToShip = countExpeditedToShip(data?.expedited?.orders);
+  // Expedited orders that still need shipping, over the report's year-long range
+  // (see lib/pacificTime). Only today's orders are subject to the 11:00am
+  // cutoff; older ones are overdue and count whenever they arrived.
+  const expeditedToShip = countExpeditedToShip(data?.expedited?.orders, todayParam);
 
   const stats: { label: string; value: string; hint?: string }[] = [
     { label: "Sample Orders Today", value: fmtNum(summary?.orderCount) },
@@ -152,7 +155,7 @@ export default function HomeContent() {
     { label: "Net Sales Today", value: fmtMoney(summary?.netTotal) },
     {
       label: "Expedited To Ship",
-      hint: "ordered before 11am",
+      hint: "11 AM Cutoff",
       value: data === null ? "—" : String(expeditedToShip),
     },
     {
@@ -162,10 +165,6 @@ export default function HomeContent() {
     {
       label: "Shipping Cost Today",
       value: data === null ? "—" : fmtMoney(shipSummary?.totalCost),
-    },
-    {
-      label: "Printers Online",
-      value: data === null ? "—" : `${onlinePrinters.length}/${printers.length}`,
     },
   ];
 
@@ -221,8 +220,8 @@ export default function HomeContent() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {QUICK_LINKS.map((link) => (
             <a
-              key={link.href}
-              href={link.href}
+              key={`${link.href}?${entireQuery}`}
+              href={`${link.href}?${entireQuery}`}
               className="group flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-all hover:border-gray-300 hover:shadow-md"
             >
               <div
